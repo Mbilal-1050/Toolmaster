@@ -13,9 +13,9 @@ export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool
       return {
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        name: 'PDFMaster',
-        url: typeof window !== 'undefined' ? window.location.origin : 'https://pdfmaster.app',
-        logo: 'https://pdfmaster.app/logo.png',
+        name: 'ToolMaster',
+        url: typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app',
+        logo: 'https://toolmaster.app/logo.png',
         description: 'Free, privacy-first 100% in-browser PDF tools suite with zero server uploads.',
         sameAs: [
           'https://twitter.com',
@@ -47,19 +47,19 @@ export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool
               '@type': 'ListItem',
               position: 1,
               name: 'Home',
-              item: typeof window !== 'undefined' ? window.location.origin : 'https://pdfmaster.app',
+              item: typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app',
             },
             {
               '@type': 'ListItem',
               position: 2,
               name: tool.category.toUpperCase(),
-              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://pdfmaster.app'}/#category-${tool.category}`,
+              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/#category-${tool.category}`,
             },
             {
               '@type': 'ListItem',
               position: 3,
               name: tool.name,
-              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://pdfmaster.app'}/${tool.slug}`,
+              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/${tool.slug}`,
             },
           ],
         },
@@ -95,12 +95,12 @@ export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool
         },
         publisher: {
           '@type': 'Organization',
-          name: 'PDFMaster',
+          name: 'ToolMaster',
         },
         datePublished: blogPost.date,
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': `${typeof window !== 'undefined' ? window.location.origin : 'https://pdfmaster.app'}/blog/${blogPost.slug}`,
+          '@id': `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/blog/${blogPost.slug}`,
         },
       };
     }

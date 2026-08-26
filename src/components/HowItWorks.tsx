@@ -24,7 +24,7 @@ export const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section aria-label="How PDFMaster Works" className="py-16 bg-slate-50/50 dark:bg-slate-900/30">
+    <section aria-label="How ToolMaster Works" className="py-16 bg-slate-50/50 dark:bg-slate-900/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-xs font-semibold rounded-full mb-3">
@@ -32,7 +32,7 @@ export const HowItWorks: React.FC = () => {
             Simple 3-Step Workflow
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            How PDFMaster Works
+            How ToolMaster Works
           </h2>
           <p className="mt-2 text-slate-600 dark:text-slate-400 text-sm">
             Zero cloud uploads. Zero software installation. Process documents securely in seconds.

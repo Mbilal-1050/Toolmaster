@@ -21,8 +21,10 @@ export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return (
+        localStorage.getItem('toolmaster_theme') === 'dark' ||
         localStorage.getItem('pdfmaster_theme') === 'dark' ||
-        (!('pdfmaster_theme' in localStorage) &&
+        (!('toolmaster_theme' in localStorage) &&
+          !('pdfmaster_theme' in localStorage) &&
           window.matchMedia('(prefers-color-scheme: dark)').matches)
       );
     }
@@ -33,10 +35,10 @@ export default function App() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('pdfmaster_theme', 'dark');
+      localStorage.setItem('toolmaster_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('pdfmaster_theme', 'light');
+      localStorage.setItem('toolmaster_theme', 'light');
     }
   }, [darkMode]);
 

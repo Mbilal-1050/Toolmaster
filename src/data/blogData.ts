@@ -8,7 +8,7 @@ export const BLOG_POSTS: BlogPost[] = [
     targetKeyword: 'compress pdf without losing quality',
     date: 'February 18, 2026',
     readTime: '6 min read',
-    author: 'PDFMaster Tech Team',
+    author: 'ToolMaster Tech Team',
     category: 'Optimization',
     relatedToolSlugs: ['compress-pdf', 'pdf-to-grayscale', 'crop-pdf'],
     content: `
@@ -227,7 +227,7 @@ While functional, this model has significant drawbacks:
 
 ### The Modern Solution: 100% In-Browser Execution
 
-At PDFMaster, every single tool executes **locally within your browser's V8 / JavaScript virtual machine**. 
+At ToolMaster, every single tool executes **locally within your browser's V8 / JavaScript virtual machine**. 
 
 By leveraging cutting-edge web technologies such as WebAssembly, HTML5 Canvas, File & Blob APIs, and native cryptography, your CPU and GPU handle the computations directly.
 

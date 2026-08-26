@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                  PDF<span className="text-rose-600">Master</span>
+                  Tool<span className="text-rose-600">Master</span>
                 </span>
                 <span className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-extrabold uppercase bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 rounded-md">
                   100% In-Browser
@@ -222,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
             >
-              About PDFMaster
+              About ToolMaster
             </button>
             <button
               onClick={() => {

@@ -20,35 +20,35 @@ export const TermsPage: React.FC = () => {
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">1. Acceptance of Terms</h2>
             <p>
-              By accessing and using PDFMaster, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+              By accessing and using ToolMaster, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
             </p>
           </div>
 
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">2. Description of Service</h2>
             <p>
-              PDFMaster provides web-based client-side document utilities (including merging, splitting, converting, editing, compressing, and signing PDF documents). The service operates exclusively within the user's browser environment without requiring remote file storage.
+              ToolMaster provides web-based client-side document utilities (including merging, splitting, converting, editing, compressing, and signing PDF documents). The service operates exclusively within the user's browser environment without requiring remote file storage.
             </p>
           </div>
 
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">3. User Responsibility & Content</h2>
             <p>
-              You retain all rights, ownership, and copyright to the documents you process through PDFMaster. You agree not to use the service for unlawful purposes or to violate intellectual property rights.
+              You retain all rights, ownership, and copyright to the documents you process through ToolMaster. You agree not to use the service for unlawful purposes or to violate intellectual property rights.
             </p>
           </div>
 
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">4. Disclaimer of Warranties</h2>
             <p>
-              The service is provided on an "AS IS" and "AS AVAILABLE" basis. PDFMaster makes no representations or warranties of any kind, express or implied, as to the operation of their services or the information, content, or materials included.
+              The service is provided on an "AS IS" and "AS AVAILABLE" basis. ToolMaster makes no representations or warranties of any kind, express or implied, as to the operation of their services or the information, content, or materials included.
             </p>
           </div>
 
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">5. Limitation of Liability</h2>
             <p>
-              In no event shall PDFMaster, its developers, or affiliates be liable for any damages arising out of the use or inability to use the materials or tools on this website.
+              In no event shall ToolMaster, its developers, or affiliates be liable for any damages arising out of the use or inability to use the materials or tools on this website.
             </p>
           </div>
         </div>

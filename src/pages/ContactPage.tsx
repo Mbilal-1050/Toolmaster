@@ -27,7 +27,7 @@ export const ContactPage: React.FC = () => {
             Support & Feedback
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mt-3">
-            Contact PDFMaster
+            Contact ToolMaster
           </h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Have a question, feature request, or partnership inquiry? We'd love to hear from you.
@@ -44,7 +44,7 @@ export const ContactPage: React.FC = () => {
                 Message Sent Successfully!
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                Thank you for reaching out to PDFMaster. Our support team typically responds within 24–48 hours.
+                Thank you for reaching out to ToolMaster. Our support team typically responds within 24–48 hours.
               </p>
               <button
                 type="button"
@@ -110,14 +110,14 @@ export const ContactPage: React.FC = () => {
                   rows={5}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="How can we assist you with PDFMaster today?..."
+                  placeholder="How can we assist you with ToolMaster today?..."
                   className="w-full px-4 py-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
                 />
               </div>
 
               <div className="pt-2 flex items-center justify-between">
                 <a
-                  href={`mailto:support@pdfmaster.app?subject=${encodeURIComponent(
+                  href={`mailto:support@toolmaster.app?subject=${encodeURIComponent(
                     formData.subject || 'Inquiry'
                   )}&body=${encodeURIComponent(formData.message)}`}
                   className="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1"

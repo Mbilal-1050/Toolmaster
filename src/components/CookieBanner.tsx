@@ -9,7 +9,9 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onNavigatePolicy }) 
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('pdfmaster_cookie_consent');
+    const consent =
+      localStorage.getItem('toolmaster_cookie_consent') ||
+      localStorage.getItem('pdfmaster_cookie_consent');
     if (!consent) {
       // Show after 1 second
       const timer = setTimeout(() => setIsVisible(true), 800);
@@ -18,12 +20,12 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onNavigatePolicy }) 
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem('pdfmaster_cookie_consent', 'accepted');
+    localStorage.setItem('toolmaster_cookie_consent', 'accepted');
     setIsVisible(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem('pdfmaster_cookie_consent', 'declined');
+    localStorage.setItem('toolmaster_cookie_consent', 'declined');
     setIsVisible(false);
   };
 

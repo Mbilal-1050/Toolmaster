@@ -1,6 +1,8 @@
 {
-  "name": "PDFMaster - 100% Client-Side PDF Tools Suite",
+  "name": "ToolMaster - 100% Client-Side PDF Tools Suite",
   "description": "Free, privacy-first PDF utility suite with 33+ tools running 100% in your browser. Merge, split, compress, convert, edit, and sign PDFs securely with zero server uploads.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

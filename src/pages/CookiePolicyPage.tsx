@@ -26,7 +26,7 @@ export const CookiePolicyPage: React.FC = () => {
 
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">How We Use Cookies</h2>
-            <p>PDFMaster uses cookies for the following categories of functionality:</p>
+            <p>ToolMaster uses cookies for the following categories of functionality:</p>
             <ul className="list-disc list-inside mt-2 space-y-1.5 pl-2">
               <li><strong>Essential & Functional Cookies:</strong> To remember your interface theme (Dark/Light mode) and store your cookie preference consent choice.</li>
               <li><strong>Advertising Cookies (Google AdSense):</strong> Third-party advertising partners use cookies to serve personalized or contextual advertisements relevant to users.</li>

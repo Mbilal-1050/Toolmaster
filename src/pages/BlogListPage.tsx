@@ -32,7 +32,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigateBlogPost, 
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-full mb-3">
             <BookOpen className="w-3.5 h-3.5" />
-            <span>PDF Master Guides & Tutorials</span>
+            <span>ToolMaster Guides & Tutorials</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
             Learn How to Master PDF Documents

@@ -16,7 +16,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
             Our Mission & Technology
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight mt-3">
-            About PDFMaster
+            About ToolMaster
           </h1>
           <p className="mt-3 text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
             Redefining document utilities with 100% in-browser privacy and zero server latency.
@@ -41,7 +41,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
               The 100% Client-Side Revolution
             </h2>
             <p>
-              PDFMaster was engineered from the ground up to solve this fundamental privacy flaw. By harnessing modern web standards—including WebAssembly, HTML5 File and Blob APIs, and client-side JavaScript execution—every single tool on PDFMaster runs locally inside your web browser. 
+              ToolMaster was engineered from the ground up to solve this fundamental privacy flaw. By harnessing modern web standards—including WebAssembly, HTML5 File and Blob APIs, and client-side JavaScript execution—every single tool on ToolMaster runs locally inside your web browser. 
             </p>
             <p className="mt-3">
               When you merge three PDFs, compress a 50MB scanner file, or electronically sign an NDA, your computer or smartphone CPU performs all mathematical calculations locally in volatile memory. <strong>Not a single byte of your document ever travels over the internet.</strong>

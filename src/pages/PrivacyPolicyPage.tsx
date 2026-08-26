@@ -27,7 +27,7 @@ export const PrivacyPolicyPage: React.FC = () => {
                 Zero Document Upload Guarantee
               </h3>
               <p className="text-xs sm:text-sm text-emerald-800 dark:text-emerald-300">
-                PDFMaster is architected as a 100% client-side application. When you use any tool (Merge, Split, Convert, Sign, Compress, etc.), your files are processed entirely inside your local device's browser memory. Your documents are never uploaded, stored, or viewed by our servers or any third parties.
+                ToolMaster is architected as a 100% client-side application. When you use any tool (Merge, Split, Convert, Sign, Compress, etc.), your files are processed entirely inside your local device's browser memory. Your documents are never uploaded, stored, or viewed by our servers or any third parties.
               </p>
             </div>
           </div>
@@ -104,8 +104,8 @@ export const PrivacyPolicyPage: React.FC = () => {
             </h2>
             <p>
               If you have questions or feedback regarding this Privacy Policy, you may contact our privacy compliance team at{' '}
-              <a href="mailto:privacy@pdfmaster.app" className="text-rose-600 font-semibold underline">
-                privacy@pdfmaster.app
+              <a href="mailto:privacy@toolmaster.app" className="text-rose-600 font-semibold underline">
+                privacy@toolmaster.app
               </a>.
             </p>
           </div>
