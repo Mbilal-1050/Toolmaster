@@ -17,12 +17,18 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigateBlog
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Back Link */}
-        <button
-          onClick={onNavigateBlog}
+        <a
+          href="/blog"
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              onNavigateBlog();
+            }
+          }}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 mb-8 transition"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Guides & Tutorials
-        </button>
+        </a>
 
         {/* Header */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
@@ -107,15 +113,20 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigateBlog
               </h4>
               <div className="flex flex-wrap gap-2">
                 {post.relatedToolSlugs.map((slug) => (
-                  <button
+                  <a
                     key={slug}
-                    type="button"
-                    onClick={() => onNavigateTool(slug)}
-                    className="px-4 py-2 bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-800 hover:bg-rose-600 hover:text-white text-slate-800 dark:text-slate-100 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 capitalize"
+                    href={`/${slug}`}
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey) {
+                        e.preventDefault();
+                        onNavigateTool(slug);
+                      }
+                    }}
+                    className="px-4 py-2 bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-800 hover:bg-rose-600 hover:text-white text-slate-800 dark:text-slate-100 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 capitalize inline-flex"
                   >
                     <span>{slug.replace(/-/g, ' ')}</span>
                     <ArrowRight className="w-3 h-3" />
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>

@@ -66,14 +66,20 @@ export const Footer: React.FC<FooterProps> = ({
                     {cat.label}
                   </h4>
                   <ul className="space-y-1.5">
-                    {tools.slice(0, 7).map((tool) => (
+                    {tools.slice(0, 8).map((tool) => (
                       <li key={tool.id}>
-                        <button
-                          onClick={() => onNavigateTool(tool.slug)}
-                          className="hover:text-white transition text-left"
+                        <a
+                          href={`/${tool.slug}`}
+                          onClick={(e) => {
+                            if (!e.ctrlKey && !e.metaKey) {
+                              e.preventDefault();
+                              onNavigateTool(tool.slug);
+                            }
+                          }}
+                          className="hover:text-white transition text-left block text-slate-400 hover:text-rose-400"
                         >
                           {tool.name}
-                        </button>
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -86,27 +92,90 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Company, Blog & Legal Columns */}
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-5 font-medium">
-            <button onClick={onNavigateHome} className="hover:text-white transition">
+            <a
+              href="/"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateHome();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Home
-            </button>
-            <button onClick={onNavigateBlog} className="hover:text-white transition">
+            </a>
+            <a
+              href="/blog"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateBlog();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Blog & Guides
-            </button>
-            <button onClick={onNavigateAbout} className="hover:text-white transition">
+            </a>
+            <a
+              href="/about"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateAbout();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               About Us
-            </button>
-            <button onClick={onNavigateContact} className="hover:text-white transition">
+            </a>
+            <a
+              href="/contact"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateContact();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Contact & Support
-            </button>
-            <button onClick={onNavigatePrivacy} className="hover:text-white transition">
+            </a>
+            <a
+              href="/privacy-policy"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigatePrivacy();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Privacy Policy
-            </button>
-            <button onClick={onNavigateTerms} className="hover:text-white transition">
+            </a>
+            <a
+              href="/terms-of-service"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateTerms();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Terms of Service
-            </button>
-            <button onClick={onNavigateCookies} className="hover:text-white transition">
+            </a>
+            <a
+              href="/cookie-policy"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateCookies();
+                }
+              }}
+              className="hover:text-white transition"
+            >
               Cookie Policy
-            </button>
+            </a>
           </div>
 
           <div className="text-slate-500 text-[11px]">

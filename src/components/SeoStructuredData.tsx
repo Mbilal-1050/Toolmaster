@@ -9,13 +9,15 @@ interface SeoStructuredDataProps {
 
 export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool, blogPost }) => {
   const getStructuredData = () => {
+    const siteBase = typeof window !== 'undefined' ? window.location.origin : 'https://www.freetoolmaster.online';
+
     if (type === 'organization') {
       return {
         '@context': 'https://schema.org',
         '@type': 'Organization',
         name: 'ToolMaster',
-        url: typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app',
-        logo: 'https://toolmaster.app/logo.png',
+        url: siteBase,
+        logo: `${siteBase}/favicon.svg`,
         description: 'Free, privacy-first 100% in-browser PDF tools suite with zero server uploads.',
         sameAs: [
           'https://twitter.com',
@@ -47,19 +49,19 @@ export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool
               '@type': 'ListItem',
               position: 1,
               name: 'Home',
-              item: typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app',
+              item: siteBase,
             },
             {
               '@type': 'ListItem',
               position: 2,
               name: tool.category.toUpperCase(),
-              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/#category-${tool.category}`,
+              item: `${siteBase}/#category-${tool.category}`,
             },
             {
               '@type': 'ListItem',
               position: 3,
               name: tool.name,
-              item: `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/${tool.slug}`,
+              item: `${siteBase}/${tool.slug}`,
             },
           ],
         },
@@ -100,7 +102,7 @@ export const SeoStructuredData: React.FC<SeoStructuredDataProps> = ({ type, tool
         datePublished: blogPost.date,
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': `${typeof window !== 'undefined' ? window.location.origin : 'https://toolmaster.app'}/blog/${blogPost.slug}`,
+          '@id': `${siteBase}/blog/${blogPost.slug}`,
         },
       };
     }

@@ -304,16 +304,22 @@ export const ToolGrid: React.FC<ToolGridProps> = ({ onSelectTool }) => {
                   const Icon = resolveToolIcon(tool.iconName);
 
                   return (
-                    <motion.div
+                    <motion.a
                       key={tool.id}
                       id={`tool-card-${tool.slug}`}
+                      href={`/${tool.slug}`}
                       initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true, margin: '-20px' }}
                       transition={{ duration: 0.3, delay: prefersReduced ? 0 : Math.min(idx * 0.04, 0.3) }}
                       whileHover={prefersReduced ? {} : { y: -3 }}
-                      onClick={() => onSelectTool(tool.slug)}
-                      className="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-xl hover:border-rose-400 dark:hover:border-rose-600 transition-all duration-200 cursor-pointer flex flex-col justify-between"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey) {
+                          e.preventDefault();
+                          onSelectTool(tool.slug);
+                        }
+                      }}
+                      className="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-xl hover:border-rose-400 dark:hover:border-rose-600 transition-all duration-200 cursor-pointer flex flex-col justify-between block"
                     >
                       <div>
                         {/* Card Header with Icon and Badge */}
@@ -345,7 +351,7 @@ export const ToolGrid: React.FC<ToolGridProps> = ({ onSelectTool }) => {
                         <span>Open Tool</span>
                         <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                       </div>
-                    </motion.div>
+                    </motion.a>
                   );
                 })}
               </div>

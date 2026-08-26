@@ -44,51 +44,134 @@ export default function App() {
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // Parse current route from window location hash or pathname
+  // Parse current route from window location pathname (or legacy hash)
   const parseCurrentRoute = (): PageView => {
+    let pathname = window.location.pathname.replace(/^\/+/, '').trim();
     const hash = window.location.hash.replace(/^#\/?/, '').trim();
-    const pathname = window.location.pathname.replace(/^\//, '').trim();
-    const route = hash || pathname;
 
-    if (!route || route === '') return { type: 'home' };
-    if (route === 'about') return { type: 'about' };
-    if (route === 'privacy-policy' || route === 'privacy') return { type: 'privacy' };
-    if (route === 'terms-of-service' || route === 'terms') return { type: 'terms' };
-    if (route === 'cookie-policy' || route === 'cookies') return { type: 'cookies' };
-    if (route === 'contact') return { type: 'contact' };
-    if (route === 'blog') return { type: 'blog' };
+    // If there is a legacy hash and no pathname, normalize to clean path
+    if (!pathname && hash) {
+      pathname = hash;
+      if (typeof window !== 'undefined' && window.history?.replaceState) {
+        window.history.replaceState(null, '', `/${hash}`);
+      }
+    }
 
-    if (route.startsWith('blog/')) {
-      const blogSlug = route.replace('blog/', '');
+    if (!pathname || pathname === '') return { type: 'home' };
+    if (pathname === 'about') return { type: 'about' };
+    if (pathname === 'privacy-policy' || pathname === 'privacy') return { type: 'privacy' };
+    if (pathname === 'terms-of-service' || pathname === 'terms') return { type: 'terms' };
+    if (pathname === 'cookie-policy' || pathname === 'cookies') return { type: 'cookies' };
+    if (pathname === 'contact') return { type: 'contact' };
+    if (pathname === 'blog') return { type: 'blog' };
+
+    if (pathname.startsWith('blog/')) {
+      const blogSlug = pathname.replace('blog/', '');
       const post = BLOG_POSTS.find((p) => p.slug === blogSlug);
       if (post) return { type: 'blog-post', slug: blogSlug };
     }
 
-    const tool = TOOLS_DATA.find((t) => t.slug === route);
+    const tool = TOOLS_DATA.find((t) => t.slug === pathname);
     if (tool) return { type: 'tool', slug: tool.slug };
 
     return { type: '404' };
   };
 
+  // Sync document title and canonical meta tag on route change
+  const updatePageSeo = (page: PageView) => {
+    let title = 'ToolMaster - 100% Free & In-Browser PDF Suite (33+ Tools)';
+    let canonicalPath = '/';
+
+    switch (page.type) {
+      case 'home':
+        title = 'ToolMaster - 100% Free & In-Browser PDF Suite (33+ Tools)';
+        canonicalPath = '/';
+        break;
+      case 'tool': {
+        const tool = TOOLS_DATA.find((t) => t.slug === page.slug);
+        if (tool) {
+          title = `${tool.name} Online Free - 100% In-Browser & Private | ToolMaster`;
+          canonicalPath = `/${tool.slug}`;
+        }
+        break;
+      }
+      case 'blog':
+        title = 'PDF Guides, Optimization Tips & Tutorials | ToolMaster';
+        canonicalPath = '/blog';
+        break;
+      case 'blog-post': {
+        const post = BLOG_POSTS.find((p) => p.slug === page.slug);
+        if (post) {
+          title = `${post.title} | ToolMaster`;
+          canonicalPath = `/blog/${post.slug}`;
+        }
+        break;
+      }
+      case 'about':
+        title = 'About ToolMaster - In-Browser PDF Suite';
+        canonicalPath = '/about';
+        break;
+      case 'privacy':
+        title = 'Privacy Policy - Zero Document Upload Guarantee | ToolMaster';
+        canonicalPath = '/privacy-policy';
+        break;
+      case 'terms':
+        title = 'Terms of Service | ToolMaster';
+        canonicalPath = '/terms-of-service';
+        break;
+      case 'cookies':
+        title = 'Cookie Policy & Consent | ToolMaster';
+        canonicalPath = '/cookie-policy';
+        break;
+      case 'contact':
+        title = 'Contact Us & Technical Support | ToolMaster';
+        canonicalPath = '/contact';
+        break;
+      default:
+        title = 'Page Not Found | ToolMaster';
+        canonicalPath = '/404';
+    }
+
+    document.title = title;
+
+    // Update or insert canonical link
+    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    const fullCanonicalUrl = `https://www.freetoolmaster.online${canonicalPath === '/' ? '' : canonicalPath}`;
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', fullCanonicalUrl);
+  };
+
   useEffect(() => {
-    setCurrentPage(parseCurrentRoute());
+    const initialRoute = parseCurrentRoute();
+    setCurrentPage(initialRoute);
+    updatePageSeo(initialRoute);
 
     const handleRouteChange = () => {
-      setCurrentPage(parseCurrentRoute());
+      const route = parseCurrentRoute();
+      setCurrentPage(route);
+      updatePageSeo(route);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.addEventListener('hashchange', handleRouteChange);
     window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('hashchange', handleRouteChange);
     return () => {
-      window.removeEventListener('hashchange', handleRouteChange);
       window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('hashchange', handleRouteChange);
     };
   }, []);
 
-  const navigateTo = (page: PageView, hashRoute: string) => {
+  const navigateTo = (page: PageView, cleanPath: string) => {
     setCurrentPage(page);
-    window.location.hash = hashRoute;
+    updatePageSeo(page);
+    const targetUrl = cleanPath ? `/${cleanPath.replace(/^\/+/, '')}` : '/';
+    if (window.location.pathname !== targetUrl) {
+      window.history.pushState(null, '', targetUrl);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

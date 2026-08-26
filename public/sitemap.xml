@@ -2,86 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Core Static Pages -->
   <url>
-    <loc>https://toolmaster.app/</loc>
+    <loc>https://www.freetoolmaster.online/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#about</loc>
+    <loc>https://www.freetoolmaster.online/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#privacy-policy</loc>
+    <loc>https://www.freetoolmaster.online/privacy-policy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#terms-of-service</loc>
+    <loc>https://www.freetoolmaster.online/terms-of-service</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#cookie-policy</loc>
+    <loc>https://www.freetoolmaster.online/cookie-policy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#contact</loc>
+    <loc>https://www.freetoolmaster.online/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolmaster.app/#blog</loc>
+    <loc>https://www.freetoolmaster.online/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- 36 Dedicated PDF Utility Routes -->
-  <url><loc>https://toolmaster.app/#merge-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#split-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#reorder-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#delete-pages</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#rotate-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#crop-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#extract-images</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#insert-image</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-jpg</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#jpg-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-png</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#png-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#word-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-word</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#excel-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-excel</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#powerpoint-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-powerpoint</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#html-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#txt-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-txt</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#csv-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-csv</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-pdfa</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#pdf-to-grayscale</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#add-watermark</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#add-page-numbers</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#stamp-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#edit-metadata</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#sign-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#flatten-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#repair-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#protect-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#unlock-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://toolmaster.app/#compress-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/merge-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/split-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/reorder-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/delete-pages</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/rotate-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/crop-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/extract-images</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/insert-image</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-jpg</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/jpg-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-png</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/png-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/word-to-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-word</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/excel-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-excel</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/powerpoint-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-powerpoint</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/html-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/txt-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-txt</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/csv-to-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-csv</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-pdfa</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/pdf-to-grayscale</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/add-watermark</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/add-page-numbers</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/stamp-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/edit-metadata</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/sign-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/flatten-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/repair-pdf</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/protect-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/unlock-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.freetoolmaster.online/compress-pdf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
 
   <!-- In-Depth Tutorial Guides -->
-  <url><loc>https://toolmaster.app/#blog/how-to-compress-pdf-without-losing-quality</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/how-to-merge-pdf-files-for-free</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/pdf-vs-word-which-format-to-use</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/how-to-digitally-sign-a-pdf-securely</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/complete-guide-to-pdf-security-and-passwords</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/how-to-convert-pdf-to-high-res-jpg-png</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/why-client-side-pdf-processing-is-better</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://toolmaster.app/#blog/how-to-split-and-extract-pdf-pages</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/how-to-compress-pdf-without-losing-quality</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/how-to-merge-pdf-files-for-free</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/pdf-vs-word-which-format-to-use</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/how-to-digitally-sign-a-pdf-securely</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/complete-guide-to-pdf-security-and-passwords</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/how-to-convert-pdf-to-high-res-jpg-png</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/why-client-side-pdf-processing-is-better</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.freetoolmaster.online/blog/how-to-split-and-extract-pdf-pages</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -79,11 +79,17 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigateBlogPost, 
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.map((post) => (
-            <article
+            <a
               key={post.slug}
               id={`blog-post-${post.slug}`}
-              onClick={() => onNavigateBlogPost(post.slug)}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-xl hover:border-rose-300 dark:hover:border-rose-900 transition-all cursor-pointer flex flex-col justify-between group"
+              href={`/blog/${post.slug}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateBlogPost(post.slug);
+                }
+              }}
+              className="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-xl hover:border-rose-300 dark:hover:border-rose-900 transition-all cursor-pointer flex flex-col justify-between group block"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-rose-600 dark:text-rose-400 mb-3">
@@ -112,7 +118,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigateBlogPost, 
                   Read Article <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </div>

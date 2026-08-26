@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://toolmaster.app/sitemap.xml
+Sitemap: https://www.freetoolmaster.online/sitemap.xml

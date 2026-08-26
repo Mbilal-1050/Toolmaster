@@ -59,8 +59,14 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Brand Logo */}
-          <div
-            onClick={onNavigateHome}
+          <a
+            href="/"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                onNavigateHome();
+              }
+            }}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-600/30 group-hover:scale-105 transition-transform">
@@ -76,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1">
@@ -111,13 +117,17 @@ export const Header: React.FC<HeaderProps> = ({
                       </div>
                       <div className="space-y-0.5">
                         {toolsInCat.map((tool) => (
-                          <div
+                          <a
                             key={tool.id}
-                            onClick={() => {
-                              setActiveDropdown(null);
-                              onNavigateTool(tool.slug);
+                            href={`/${tool.slug}`}
+                            onClick={(e) => {
+                              if (!e.ctrlKey && !e.metaKey) {
+                                e.preventDefault();
+                                setActiveDropdown(null);
+                                onNavigateTool(tool.slug);
+                              }
                             }}
-                            className="p-2.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer flex items-center justify-between group/item transition"
+                            className="p-2.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer flex items-center justify-between group/item transition block"
                           >
                             <div className="min-w-0">
                               <p className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400">
@@ -132,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 {tool.badge}
                               </span>
                             )}
-                          </div>
+                          </a>
                         ))}
                       </div>
                     </div>
@@ -141,18 +151,30 @@ export const Header: React.FC<HeaderProps> = ({
               );
             })}
 
-            <button
-              onClick={onNavigateBlog}
+            <a
+              href="/blog"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateBlog();
+                }
+              }}
               className="px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
             >
               Blog
-            </button>
-            <button
-              onClick={onNavigateAbout}
+            </a>
+            <a
+              href="/about"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                  e.preventDefault();
+                  onNavigateAbout();
+                }
+              }}
               className="px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
             >
               About
-            </button>
+            </a>
           </nav>
 
           {/* Right Action Icons */}

@@ -1414,16 +1414,22 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {tool.relatedToolSlugs.map((slug) => (
-                <div
+                <a
                   key={slug}
-                  onClick={() => onNavigateTool(slug)}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-500 hover:bg-rose-50/50 dark:hover:bg-rose-950/30 cursor-pointer transition flex items-center justify-between group"
+                  href={`/${slug}`}
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey) {
+                      e.preventDefault();
+                      onNavigateTool(slug);
+                    }
+                  }}
+                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-500 hover:bg-rose-50/50 dark:hover:bg-rose-950/30 cursor-pointer transition flex items-center justify-between group block"
                 >
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-rose-600 capitalize">
                     {slug.replace(/-/g, ' ')}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-transform" />
-                </div>
+                </a>
               ))}
             </div>
           </section>
