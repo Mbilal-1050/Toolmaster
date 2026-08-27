@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, Shield, Heart, Lock, Globe, ExternalLink } from 'lucide-react';
 import { CATEGORIES_CONFIG, TOOLS_DATA } from '../data/toolsData';
+import { ProductHuntBadge } from './ProductHuntBadge';
 
 interface FooterProps {
   onNavigateHome: () => void;
@@ -53,6 +54,11 @@ export const Footer: React.FC<FooterProps> = ({
                 <Lock className="w-3.5 h-3.5 text-rose-400" />
                 <span>Client-Side Safe</span>
               </div>
+            </div>
+
+            {/* Product Hunt Badge */}
+            <div className="pt-2">
+              <ProductHuntBadge theme="dark" />
             </div>
           </div>
 

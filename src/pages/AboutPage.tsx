@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Lock, Cpu, Globe, CheckCircle2, Heart } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
+import { ProductHuntBadge, ProductHuntLaunchCard } from '../components/ProductHuntBadge';
 
 interface AboutPageProps {
   onNavigateHome: () => void;
@@ -99,10 +100,15 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
             </p>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+          <div className="py-4">
+            <ProductHuntLaunchCard />
+          </div>
+
+          <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <ProductHuntBadge />
             <button
               onClick={onNavigateHome}
-              className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl shadow-md transition"
+              className="w-full sm:w-auto px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl shadow-md transition"
             >
               Explore All 33+ Free Tools
             </button>

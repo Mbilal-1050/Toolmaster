@@ -16,6 +16,7 @@ import { TrustBadges } from '../components/TrustBadges';
 import { HowItWorks } from '../components/HowItWorks';
 import { AdSlot } from '../components/AdSlot';
 import { SeoStructuredData } from '../components/SeoStructuredData';
+import { ProductHuntBadge, ProductHuntLaunchCard } from '../components/ProductHuntBadge';
 import { BLOG_POSTS } from '../data/blogData';
 
 interface HomePageProps {
@@ -154,11 +155,30 @@ export const HomePage: React.FC<HomePageProps> = ({
               );
             })}
           </motion.div>
+
+          {/* Product Hunt Featured Badge */}
+          <motion.div
+            initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: prefersReduced ? 0 : 0.8,
+              ease: 'easeOut',
+            }}
+            className="mt-8 flex justify-center"
+          >
+            <ProductHuntBadge />
+          </motion.div>
         </div>
       </section>
 
       {/* Trust Signals Section */}
       <TrustBadges />
+
+      {/* Product Hunt Launch Card Banner */}
+      <div className="max-w-7xl mx-auto px-4 mt-6">
+        <ProductHuntLaunchCard />
+      </div>
 
       {/* Top AdSlot */}
       <div className="max-w-7xl mx-auto px-4 mt-6">
