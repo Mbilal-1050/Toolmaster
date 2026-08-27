@@ -223,9 +223,20 @@ export async function reorderPdf(
 ): Promise<Blob> {
   const fileBytes = await file.arrayBuffer();
   const srcPdf = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
-  const newPdf = await PDFDocument.create();
+  const totalPages = srcPdf.getPageCount();
+  
+  let validOrder = newOrderIndices;
+  if (!validOrder || validOrder.length === 0) {
+    validOrder = Array.from({ length: totalPages }, (_, i) => i);
+  } else {
+    validOrder = validOrder.filter((idx) => typeof idx === 'number' && idx >= 0 && idx < totalPages);
+    if (validOrder.length === 0) {
+      validOrder = Array.from({ length: totalPages }, (_, i) => i);
+    }
+  }
 
-  const copiedPages = await newPdf.copyPages(srcPdf, newOrderIndices);
+  const newPdf = await PDFDocument.create();
+  const copiedPages = await newPdf.copyPages(srcPdf, validOrder);
   copiedPages.forEach((page) => newPdf.addPage(page));
   if (onProgress) onProgress(80);
 
@@ -705,37 +716,61 @@ export async function pdfToWord(file: File, onProgress?: (p: number) => void): P
 export async function excelToPdf(file: File, onProgress?: (p: number) => void): Promise<Blob> {
   const arrayBuffer = await file.arrayBuffer();
   const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-  if (onProgress) onProgress(40);
+  if (onProgress) onProgress(30);
 
   const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  const pageHeight = doc.internal.pageSize.getHeight();
   let isFirstSheet = true;
 
-  workbook.SheetNames.forEach((sheetName) => {
+  const totalSheets = workbook.SheetNames.length;
+  workbook.SheetNames.forEach((sheetName, sIdx) => {
     if (!isFirstSheet) doc.addPage('a4', 'landscape');
     isFirstSheet = false;
 
     const worksheet = workbook.Sheets[sheetName];
     const data: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-    doc.setFontSize(16);
-    doc.setTextColor(33, 43, 54);
-    doc.text(`Sheet: ${sheetName}`, 40, 40);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(30, 41, 59);
+    doc.text(`Sheet: ${sheetName}`, 40, 36);
 
     let startY = 60;
-    doc.setFontSize(10);
+    const rowHeight = 18;
 
-    data.slice(0, 45).forEach((row) => {
+    data.forEach((row, rIdx) => {
+      // Check page break
+      if (startY > pageHeight - 40) {
+        doc.addPage('a4', 'landscape');
+        startY = 40;
+      }
+
+      if (rIdx === 0) {
+        doc.setFillColor(241, 245, 249);
+        doc.rect(36, startY - 12, 768, rowHeight, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(15, 23, 42);
+      } else {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(51, 65, 85);
+      }
+
       let startX = 40;
       row.slice(0, 10).forEach((cell) => {
-        const cellStr = String(cell ?? '');
-        doc.text(cellStr.substring(0, 20), startX, startY);
+        const cellStr = String(cell ?? '').trim();
+        doc.text(cellStr.substring(0, 22), startX, startY);
         startX += 75;
       });
-      startY += 18;
+
+      startY += rowHeight;
     });
+
+    if (onProgress) onProgress(30 + Math.round(((sIdx + 1) / totalSheets) * 60));
   });
 
-  if (onProgress) onProgress(90);
+  if (onProgress) onProgress(95);
   const pdfBlob = doc.output('blob');
   if (onProgress) onProgress(100);
   return pdfBlob;
@@ -869,6 +904,136 @@ export async function powerPointToPdf(file: File, onProgress?: (p: number) => vo
 }
 
 /**
+ * 16. PDF TO POWERPOINT (PPTX Generator)
+ */
+export async function pdfToPowerPoint(
+  file: File,
+  onProgress?: (p: number) => void
+): Promise<Blob> {
+  const images = await renderPdfToImages(file, 'image/jpeg', 1.8, 0.9, (p) => {
+    if (onProgress) onProgress(Math.round(p * 0.7));
+  });
+
+  if (!images || images.length === 0) {
+    throw new Error('Unable to extract presentation slides from the PDF file.');
+  }
+
+  const zip = new JSZip();
+
+  // 1. [Content_Types].xml
+  let contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="jpeg" ContentType="image/jpeg"/>
+  <Default Extension="jpg" ContentType="image/jpeg"/>
+  <Default Extension="png" ContentType="image/png"/>
+  <Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>`;
+
+  for (let i = 1; i <= images.length; i++) {
+    contentTypesXml += `\n  <Override PartName="/ppt/slides/slide${i}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`;
+  }
+  contentTypesXml += `\n</Types>`;
+  zip.file('[Content_Types].xml', contentTypesXml);
+
+  // 2. _rels/.rels
+  zip.file(
+    '_rels/.rels',
+    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/>
+</Relationships>`
+  );
+
+  // 3. ppt/_rels/presentation.xml.rels
+  let presRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`;
+  for (let i = 1; i <= images.length; i++) {
+    presRelsXml += `\n  <Relationship Id="rId${i}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide${i}.xml"/>`;
+  }
+  presRelsXml += `\n</Relationships>`;
+  zip.file('ppt/_rels/presentation.xml.rels', presRelsXml);
+
+  // 4. ppt/presentation.xml
+  let presXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:sldIdLst>`;
+  for (let i = 1; i <= images.length; i++) {
+    presXml += `\n    <p:sldId id="${255 + i}" r:id="rId${i}"/>`;
+  }
+  presXml += `\n  </p:sldIdLst>
+  <p:sldSz cx="12192000" cy="6858000"/>
+</p:presentation>`;
+  zip.file('ppt/presentation.xml', presXml);
+
+  // 5. Individual slides and image media
+  for (let i = 1; i <= images.length; i++) {
+    const imgData = images[i - 1];
+    const imgArrayBuffer = await imgData.blob.arrayBuffer();
+    zip.file(`ppt/media/image${i}.jpg`, imgArrayBuffer);
+
+    // Slide relationship
+    zip.file(
+      `ppt/slides/_rels/slide${i}.xml.rels`,
+      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image${i}.jpg"/>
+</Relationships>`
+    );
+
+    // Slide XML
+    zip.file(
+      `ppt/slides/slide${i}.xml`,
+      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:cSld>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr/>
+      <p:pic>
+        <p:nvPicPr>
+          <p:cNvPr id="2" name="Slide Image ${i}"/>
+          <p:cNvPicPr>
+            <a:picLocks noChangeAspect="1"/>
+          </p:cNvPicPr>
+          <p:nvPr/>
+        </p:nvPicPr>
+        <p:blipFill>
+          <a:blip r:embed="rId1"/>
+          <a:stretch>
+            <a:fillRect/>
+          </a:stretch>
+        </p:blipFill>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="0" y="0"/>
+            <a:ext cx="12192000" cy="6858000"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+        </p:spPr>
+      </p:pic>
+    </p:spTree>
+  </p:cSld>
+</p:sld>`
+    );
+  }
+
+  if (onProgress) onProgress(90);
+  const pptxBlob = await zip.generateAsync({
+    type: 'blob',
+    mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  });
+  if (onProgress) onProgress(100);
+  return pptxBlob;
+}
+
+/**
  * 17. HTML TO PDF
  */
 export async function htmlToPdf(htmlContent: string, onProgress?: (p: number) => void): Promise<Blob> {
@@ -970,30 +1135,47 @@ export async function csvToPdf(csvText: string, onProgress?: (p: number) => void
   const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
   const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.text('CSV Data Export Report', 40, 40);
+  doc.setTextColor(30, 41, 59);
+  doc.text('CSV Data Export Report', 40, 36);
 
-  let y = 70;
-  doc.setFontSize(9);
+  let y = 60;
+  const rowHeight = 18;
 
-  rows.slice(0, 40).forEach((row, idx) => {
+  rows.forEach((row, idx) => {
+    if (y > pageHeight - 40) {
+      doc.addPage('a4', 'landscape');
+      y = 40;
+    }
+
     if (idx === 0) {
-      doc.setFillColor(238, 242, 255);
-      doc.rect(35, y - 12, 770, 20, 'F');
+      doc.setFillColor(241, 245, 249);
+      doc.rect(36, y - 12, 768, rowHeight, 'F');
       doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(15, 23, 42);
     } else {
       doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(51, 65, 85);
     }
 
     let x = 40;
-    row.slice(0, 8).forEach((cell) => {
-      doc.text(String(cell ?? '').substring(0, 22), x, y);
-      x += 95;
+    row.slice(0, 10).forEach((cell) => {
+      doc.text(String(cell ?? '').trim().substring(0, 22), x, y);
+      x += 75;
     });
-    y += 18;
+    y += rowHeight;
+
+    if (onProgress && idx % 25 === 0) {
+      onProgress(Math.round((idx / rows.length) * 90));
+    }
   });
 
-  if (onProgress) onProgress(90);
+  if (onProgress) onProgress(95);
   const blob = doc.output('blob');
   if (onProgress) onProgress(100);
   return blob;

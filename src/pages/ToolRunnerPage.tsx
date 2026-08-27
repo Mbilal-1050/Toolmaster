@@ -44,6 +44,7 @@ import {
   excelToPdf,
   pdfToExcel,
   powerPointToPdf,
+  pdfToPowerPoint,
   htmlToPdf,
   pdfToHtml,
   txtToPdf,
@@ -429,16 +430,13 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
 
         // 17. PDF TO POWERPOINT
         case 'pdf-to-powerpoint': {
-          const images = await renderPdfToImages(mainFile, 'image/jpeg', 1.8, 0.9, setProgress);
-          const zip = new JSZip();
-          images.forEach((img) => zip.file(`slide_${img.pageNumber}.jpg`, img.blob));
-          const zipBlob = await zip.generateAsync({ type: 'blob' });
+          const blob = await pdfToPowerPoint(mainFile, setProgress);
           setResult({
-            blob: zipBlob,
-            fileName: `${baseName}_presentation_slides.zip`,
+            blob,
+            fileName: `${baseName}.pptx`,
             originalSize: mainFile.size,
-            newSize: zipBlob.size,
-            type: 'application/zip',
+            newSize: blob.size,
+            type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           });
           break;
         }
