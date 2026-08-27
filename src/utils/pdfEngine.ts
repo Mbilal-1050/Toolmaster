@@ -5,6 +5,7 @@ import * as docx from 'docx';
 import * as mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import * as pdfjsLib from 'pdfjs-dist';
+import pptxgen from 'pptxgenjs';
 
 export function setupPdfWorker() {
   if (typeof window !== 'undefined') {
@@ -910,125 +911,93 @@ export async function pdfToPowerPoint(
   file: File,
   onProgress?: (p: number) => void
 ): Promise<Blob> {
-  const images = await renderPdfToImages(file, 'image/jpeg', 1.8, 0.9, (p) => {
-    if (onProgress) onProgress(Math.round(p * 0.7));
-  });
+  const arrayBuffer = await file.arrayBuffer();
+  if (onProgress) onProgress(15);
 
-  if (!images || images.length === 0) {
-    throw new Error('Unable to extract presentation slides from the PDF file.');
+  const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
+  const pdfDoc = await loadingTask.promise;
+  const numPages = pdfDoc.numPages;
+
+  if (numPages === 0) {
+    throw new Error('The PDF document contains no pages to convert.');
   }
 
-  const zip = new JSZip();
+  const pptx = new pptxgen();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = file.name.replace(/\.[^/.]+$/, '');
+  pptx.author = 'PDFMaster PowerPoint Engine';
 
-  // 1. [Content_Types].xml
-  let contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml" ContentType="application/xml"/>
-  <Default Extension="jpeg" ContentType="image/jpeg"/>
-  <Default Extension="jpg" ContentType="image/jpeg"/>
-  <Default Extension="png" ContentType="image/png"/>
-  <Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>`;
+  for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 2.0 });
 
-  for (let i = 1; i <= images.length; i++) {
-    contentTypesXml += `\n  <Override PartName="/ppt/slides/slide${i}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`;
-  }
-  contentTypesXml += `\n</Types>`;
-  zip.file('[Content_Types].xml', contentTypesXml);
+    // Render high-resolution page canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
 
-  // 2. _rels/.rels
-  zip.file(
-    '_rels/.rels',
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/>
-</Relationships>`
-  );
+    if (ctx) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvasContext: ctx, viewport, canvas } as any).promise;
+    }
 
-  // 3. ppt/_rels/presentation.xml.rels
-  let presRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`;
-  for (let i = 1; i <= images.length; i++) {
-    presRelsXml += `\n  <Relationship Id="rId${i}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide${i}.xml"/>`;
-  }
-  presRelsXml += `\n</Relationships>`;
-  zip.file('ppt/_rels/presentation.xml.rels', presRelsXml);
+    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-  // 4. ppt/presentation.xml
-  let presXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <p:sldIdLst>`;
-  for (let i = 1; i <= images.length; i++) {
-    presXml += `\n    <p:sldId id="${255 + i}" r:id="rId${i}"/>`;
-  }
-  presXml += `\n  </p:sldIdLst>
-  <p:sldSz cx="12192000" cy="6858000"/>
-</p:presentation>`;
-  zip.file('ppt/presentation.xml', presXml);
+    // Extract text blocks for editable text in PowerPoint
+    const textContent = await page.getTextContent();
+    const rawItems: any[] = textContent.items || [];
 
-  // 5. Individual slides and image media
-  for (let i = 1; i <= images.length; i++) {
-    const imgData = images[i - 1];
-    const imgArrayBuffer = await imgData.blob.arrayBuffer();
-    zip.file(`ppt/media/image${i}.jpg`, imgArrayBuffer);
+    const slide = pptx.addSlide();
 
-    // Slide relationship
-    zip.file(
-      `ppt/slides/_rels/slide${i}.xml.rels`,
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image${i}.jpg"/>
-</Relationships>`
-    );
+    // 1. Add background high-fidelity slide image
+    slide.addImage({
+      data: imgDataUrl,
+      x: 0,
+      y: 0,
+      w: 13.333,
+      h: 7.5,
+      sizing: { type: 'contain', w: 13.333, h: 7.5 },
+    });
 
-    // Slide XML
-    zip.file(
-      `ppt/slides/slide${i}.xml`,
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-  <p:cSld>
-    <p:spTree>
-      <p:nvGrpSpPr>
-        <p:cNvPr id="1" name=""/>
-        <p:cNvGrpSpPr/>
-        <p:nvPr/>
-      </p:nvGrpSpPr>
-      <p:grpSpPr/>
-      <p:pic>
-        <p:nvPicPr>
-          <p:cNvPr id="2" name="Slide Image ${i}"/>
-          <p:cNvPicPr>
-            <a:picLocks noChangeAspect="1"/>
-          </p:cNvPicPr>
-          <p:nvPr/>
-        </p:nvPicPr>
-        <p:blipFill>
-          <a:blip r:embed="rId1"/>
-          <a:stretch>
-            <a:fillRect/>
-          </a:stretch>
-        </p:blipFill>
-        <p:spPr>
-          <a:xfrm>
-            <a:off x="0" y="0"/>
-            <a:ext cx="12192000" cy="6858000"/>
-          </a:xfrm>
-          <a:prstGeom prst="rect">
-            <a:avLst/>
-          </a:prstGeom>
-        </p:spPr>
-      </p:pic>
-    </p:spTree>
-  </p:cSld>
-</p:sld>`
-    );
+    // 2. Group extracted text lines for editable PowerPoint content
+    if (rawItems.length > 0) {
+      const textLines: string[] = [];
+      let currentLine = '';
+      let lastY: number | null = null;
+
+      for (const item of rawItems) {
+        if (!item.str) continue;
+        const currentY = item.transform ? Math.round(item.transform[5]) : 0;
+        if (lastY !== null && Math.abs(currentY - lastY) > 8) {
+          if (currentLine.trim().length > 0) {
+            textLines.push(currentLine.trim());
+          }
+          currentLine = item.str;
+        } else {
+          currentLine += (currentLine ? ' ' : '') + item.str;
+        }
+        lastY = currentY;
+      }
+      if (currentLine.trim().length > 0) {
+        textLines.push(currentLine.trim());
+      }
+
+      // Add selectable/editable text notes or shapes on slide
+      if (textLines.length > 0) {
+        const slideNotes = textLines.join('\n');
+        slide.addNotes(slideNotes);
+      }
+    }
+
+    if (onProgress) {
+      onProgress(15 + Math.round((pageNum / numPages) * 75));
+    }
   }
 
-  if (onProgress) onProgress(90);
-  const pptxBlob = await zip.generateAsync({
-    type: 'blob',
-    mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  });
+  if (onProgress) onProgress(92);
+  const pptxBlob = (await pptx.write({ outputType: 'blob' })) as Blob;
   if (onProgress) onProgress(100);
   return pptxBlob;
 }

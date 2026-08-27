@@ -355,20 +355,21 @@ export const TOOLS_DATA: ToolItem[] = [
     id: 'pdf-to-powerpoint',
     slug: 'pdf-to-powerpoint',
     name: 'PDF to PowerPoint',
-    shortDesc: 'Convert PDF document pages into a presentation slide deck.',
-    fullDesc: 'Transform PDF pages and handouts into presentation slides ready to display on screens or import into presentation software.',
+    shortDesc: 'Convert PDF document pages into an editable Microsoft PowerPoint (.pptx) presentation.',
+    fullDesc: 'Transform PDF pages and handouts into a genuine Microsoft PowerPoint (.pptx) slide deck with widescreen 16:9 layout, high-resolution visuals, and slide notes content.',
     category: 'convert',
     iconName: 'Sliders',
     acceptedFiles: '.pdf',
     allowMultiple: false,
-    keywords: ['pdf to powerpoint converter', 'convert pdf to pptx', 'pdf to presentation slides'],
+    keywords: ['pdf to powerpoint converter', 'convert pdf to pptx', 'pdf to presentation slides', 'pdf to pptx'],
     steps: [
-      { title: 'Upload PDF', desc: 'Upload your PDF slide deck or document.' },
-      { title: 'Process Layout', desc: 'Each page is rendered and formatted for presentation display.' },
-      { title: 'Download Deck', desc: 'Get your presentation-ready deck.' }
+      { title: 'Upload PDF', desc: 'Upload your PDF document or presentation handout.' },
+      { title: 'Build PPTX Slides', desc: 'Each page is rendered as a 16:9 widescreen PowerPoint slide with text content.' },
+      { title: 'Download PPTX', desc: 'Download your presentation file compatible with Microsoft PowerPoint, Google Slides, and Apple Keynote.' }
     ],
     faqs: [
-      { q: 'How are the slides exported?', a: 'Pages are converted into standardized widescreen presentation slides.' }
+      { q: 'What format is generated?', a: 'A standard Microsoft PowerPoint OpenXML presentation (.pptx) with 16:9 widescreen slides.' },
+      { q: 'Can I open this in Google Slides or Keynote?', a: 'Yes, the exported .pptx file is fully compatible with Microsoft PowerPoint 365, Google Slides, LibreOffice Impress, and Apple Keynote.' }
     ],
     relatedToolSlugs: ['powerpoint-to-pdf', 'pdf-to-jpg', 'pdf-to-word']
   },
