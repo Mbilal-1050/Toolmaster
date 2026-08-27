@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="tmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#881337" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background rounded squircle (48x48 multiple) -->
+  <rect width="192" height="192" rx="42" fill="url(#tmGrad)"/>
+  
+  <!-- Document Sheet with Folded Corner -->
+  <g filter="url(#shadow)" fill="#ffffff">
+    <path d="M 54 36 L 112 36 L 138 62 L 138 152 A 6 6 0 0 1 132 158 L 60 158 A 6 6 0 0 1 54 152 Z"/>
+  </g>
+  
+  <!-- Folded Corner Flap -->
+  <path d="M 112 36 L 112 62 L 138 62 Z" fill="#ffe4e6"/>
+  
+  <!-- Document Lines / Tool Accent -->
+  <rect x="70" y="80" width="52" height="8" rx="4" fill="#e11d48"/>
+  <rect x="70" y="98" width="52" height="8" rx="4" fill="#e11d48" opacity="0.85"/>
+  <rect x="70" y="116" width="34" height="8" rx="4" fill="#e11d48" opacity="0.6"/>
+
+  <!-- Small star / badge spark in corner -->
+  <circle cx="140" cy="140" r="14" fill="#f59e0b"/>
+  <path d="M 140 131 L 142.5 137.5 L 149 140 L 142.5 142.5 L 140 149 L 137.5 142.5 L 131 140 L 137.5 137.5 Z" fill="#ffffff"/>
+</svg>
