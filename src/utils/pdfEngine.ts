@@ -6,10 +6,21 @@ import * as mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Configure pdfjs worker for in-browser rendering
-if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
+export function setupPdfWorker() {
+  if (typeof window !== 'undefined') {
+    try {
+      // Use local bundled worker via Vite URL resolver
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.min.mjs',
+        import.meta.url
+      ).toString();
+    } catch {
+      // Guaranteed exact version match fallback
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version || '6.2.108'}/build/pdf.worker.min.mjs`;
+    }
+  }
 }
+setupPdfWorker();
 
 /**
  * Load PDF page previews as canvas data URLs
@@ -20,6 +31,7 @@ export async function getPdfThumbnails(
   scale: number = 0.5
 ): Promise<{ pageNumber: number; dataUrl: string; width: number; height: number }[]> {
   try {
+    setupPdfWorker();
     const arrayBuffer = file instanceof File ? await file.arrayBuffer() : file;
     const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
     const pdf = await loadingTask.promise;
@@ -54,6 +66,7 @@ export async function getPdfThumbnails(
  * Extract raw text from PDF
  */
 export async function extractTextFromPdf(file: File | ArrayBuffer): Promise<string> {
+  setupPdfWorker();
   const arrayBuffer = file instanceof File ? await file.arrayBuffer() : file;
   const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;
@@ -80,6 +93,7 @@ export async function renderPdfToImages(
   quality: number = 0.92,
   onProgress?: (progress: number) => void
 ): Promise<{ pageNumber: number; blob: Blob; dataUrl: string }[]> {
+  setupPdfWorker();
   const arrayBuffer = file instanceof File ? await file.arrayBuffer() : file;
   const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;
@@ -1179,28 +1193,49 @@ export async function compressPdf(
   onProgress?: (p: number) => void
 ): Promise<{ blob: Blob; originalSize: number; newSize: number; savingsRatio: number }> {
   const originalSize = file.size;
-  const scale = level === 'high' ? 1.0 : level === 'medium' ? 1.4 : 1.8;
-  const quality = level === 'high' ? 0.65 : level === 'medium' ? 0.8 : 0.9;
+  const scale = level === 'high' ? 1.0 : level === 'medium' ? 1.25 : 1.5;
+  const quality = level === 'high' ? 0.55 : level === 'medium' ? 0.72 : 0.85;
 
-  const images = await renderPdfToImages(file, 'image/jpeg', scale, quality, (p) => {
-    if (onProgress) onProgress(Math.round(p * 0.7));
-  });
-
-  const pdfDoc = await PDFDocument.create();
-
-  for (let i = 0; i < images.length; i++) {
-    const jpgBytes = await images[i].blob.arrayBuffer();
-    const embedded = await pdfDoc.embedJpg(jpgBytes);
-    const page = pdfDoc.addPage([embedded.width / (scale / 1.0), embedded.height / (scale / 1.0)]);
-    page.drawImage(embedded, {
-      x: 0,
-      y: 0,
-      width: page.getWidth(),
-      height: page.getHeight(),
+  try {
+    const images = await renderPdfToImages(file, 'image/jpeg', scale, quality, (p) => {
+      if (onProgress) onProgress(Math.round(p * 0.7));
     });
-    if (onProgress) onProgress(70 + Math.round(((i + 1) / images.length) * 25));
+
+    if (images && images.length > 0) {
+      const pdfDoc = await PDFDocument.create();
+
+      for (let i = 0; i < images.length; i++) {
+        const jpgBytes = await images[i].blob.arrayBuffer();
+        const embedded = await pdfDoc.embedJpg(jpgBytes);
+        const page = pdfDoc.addPage([embedded.width / scale, embedded.height / scale]);
+        page.drawImage(embedded, {
+          x: 0,
+          y: 0,
+          width: page.getWidth(),
+          height: page.getHeight(),
+        });
+        if (onProgress) onProgress(70 + Math.round(((i + 1) / images.length) * 25));
+      }
+
+      const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+      const newSize = pdfBytes.byteLength;
+      const savingsRatio = Math.max(0, Math.round(((originalSize - newSize) / originalSize) * 100));
+
+      if (onProgress) onProgress(100);
+      return {
+        blob: new Blob([pdfBytes], { type: 'application/pdf' }),
+        originalSize,
+        newSize,
+        savingsRatio,
+      };
+    }
+  } catch (renderErr) {
+    console.warn('Image-based compression fallback to stream compression:', renderErr);
   }
 
+  // Fallback stream compression
+  const fileBytes = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
   const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
   const newSize = pdfBytes.byteLength;
   const savingsRatio = Math.max(0, Math.round(((originalSize - newSize) / originalSize) * 100));
