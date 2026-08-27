@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { PageView } from './types';
 import { TOOLS_DATA } from './data/toolsData';
 import { BLOG_POSTS } from './data/blogData';
@@ -281,6 +282,9 @@ export default function App() {
 
       {/* GDPR / AdSense Cookie Banner */}
       <CookieBanner onNavigatePolicy={handleNavigateCookies} />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
