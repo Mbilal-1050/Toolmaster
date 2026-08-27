@@ -179,7 +179,8 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
       const mainFile = files[0];
       const baseName = mainFile ? mainFile.name.replace(/\.[^/.]+$/, '') : 'document';
 
-      switch (tool.slug) {
+      const executionTask = (async () => {
+        switch (tool.slug) {
         // 1. MERGE PDF
         case 'merge-pdf': {
           if (files.length < 2) {
@@ -707,6 +708,15 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
           throw new Error('This tool configuration is currently executing standard optimization.');
         }
       }
+      })();
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Processing timed out. Please verify your file and try again.'));
+        }, 25000);
+      });
+
+      await Promise.race([executionTask, timeoutPromise]);
 
       // Fire celebratory confetti!
       confetti({

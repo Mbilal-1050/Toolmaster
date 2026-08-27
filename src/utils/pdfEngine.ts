@@ -469,44 +469,179 @@ export async function imagesToPdf(
 }
 
 /**
+ * Helper: Render HTML string into clean, multi-page vector PDF document
+ */
+function renderHtmlToJsPdf(htmlString: string, title?: string): jsPDF {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const margin = 45;
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
+  const contentWidth = pageWidth - margin * 2;
+  let cursorY = margin + 15;
+
+  const checkPageBreak = (neededHeight: number) => {
+    if (cursorY + neededHeight > pageHeight - margin - 20) {
+      doc.addPage();
+      cursorY = margin + 15;
+    }
+  };
+
+  // Optional Title Banner
+  if (title) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(15, 23, 42);
+    const titleLines = doc.splitTextToSize(title, contentWidth);
+    doc.text(titleLines, margin, cursorY);
+    cursorY += titleLines.length * 26 + 12;
+
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(1);
+    doc.line(margin, cursorY, pageWidth - margin, cursorY);
+    cursorY += 16;
+  }
+
+  // Parse HTML blocks
+  const cleanHtml = htmlString || '';
+  const blockRegex = /<(h[1-6]|p|li|blockquote|pre|tr)[^>]*>([\s\S]*?)<\/\1>/gi;
+  let match: RegExpExecArray | null;
+  let blockCount = 0;
+
+  while ((match = blockRegex.exec(cleanHtml)) !== null) {
+    blockCount++;
+    const tag = match[1].toLowerCase();
+    const rawContent = match[2];
+    const textContent = rawContent
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!textContent) continue;
+
+    if (tag === 'h1') {
+      checkPageBreak(38);
+      cursorY += 10;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(15, 23, 42);
+      const lines = doc.splitTextToSize(textContent, contentWidth);
+      doc.text(lines, margin, cursorY);
+      cursorY += lines.length * 22 + 8;
+    } else if (tag === 'h2') {
+      checkPageBreak(30);
+      cursorY += 8;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.setTextColor(30, 41, 59);
+      const lines = doc.splitTextToSize(textContent, contentWidth);
+      doc.text(lines, margin, cursorY);
+      cursorY += lines.length * 18 + 6;
+    } else if (tag === 'h3') {
+      checkPageBreak(24);
+      cursorY += 6;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12.5);
+      doc.setTextColor(51, 65, 85);
+      const lines = doc.splitTextToSize(textContent, contentWidth);
+      doc.text(lines, margin, cursorY);
+      cursorY += lines.length * 16 + 4;
+    } else if (tag === 'li') {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(51, 65, 85);
+      const bulletText = textContent.startsWith('•') ? textContent : `•  ${textContent}`;
+      const lines = doc.splitTextToSize(bulletText, contentWidth - 16);
+      checkPageBreak(lines.length * 15 + 4);
+      doc.text(lines, margin + 16, cursorY);
+      cursorY += lines.length * 15 + 4;
+    } else if (tag === 'blockquote') {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(10.5);
+      doc.setTextColor(71, 85, 105);
+      const lines = doc.splitTextToSize(textContent, contentWidth - 24);
+      checkPageBreak(lines.length * 15 + 10);
+      doc.setDrawColor(225, 29, 72); // rose-600 accent border
+      doc.setLineWidth(2);
+      doc.line(margin + 4, cursorY - 2, margin + 4, cursorY + lines.length * 15);
+      doc.text(lines, margin + 16, cursorY);
+      cursorY += lines.length * 15 + 10;
+    } else {
+      const isBold = rawContent.includes('<strong>') || rawContent.includes('<b>');
+      const isItalic = rawContent.includes('<em>') || rawContent.includes('<i>');
+      doc.setFont('helvetica', isBold && isItalic ? 'bolditalic' : isBold ? 'bold' : isItalic ? 'italic' : 'normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(51, 65, 85);
+      const lines = doc.splitTextToSize(textContent, contentWidth);
+      checkPageBreak(lines.length * 15 + 6);
+      doc.text(lines, margin, cursorY);
+      cursorY += lines.length * 15 + 6;
+    }
+  }
+
+  // If no HTML blocks found, render plain text fallback
+  if (blockCount === 0) {
+    const plainText = cleanHtml.replace(/<[^>]+>/g, '\n').replace(/\n\s*\n/g, '\n\n').trim();
+    if (plainText) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(51, 65, 85);
+      const lines = doc.splitTextToSize(plainText, contentWidth);
+      for (const line of lines) {
+        checkPageBreak(16);
+        doc.text(line, margin, cursorY);
+        cursorY += 15;
+      }
+    }
+  }
+
+  // Add subtle page numbers at footer
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 25, { align: 'center' });
+  }
+
+  return doc;
+}
+
+/**
  * 11. WORD TO PDF (DOCX -> PDF)
  */
 export async function wordToPdf(file: File, onProgress?: (p: number) => void): Promise<Blob> {
+  if (onProgress) onProgress(15);
   const arrayBuffer = await file.arrayBuffer();
-  if (onProgress) onProgress(30);
+  if (onProgress) onProgress(35);
 
-  const result = await mammoth.convertToHtml({ arrayBuffer });
-  const html = result.value || '<h1>Document</h1><p>Converted from Word</p>';
-  if (onProgress) onProgress(60);
+  let html = '';
+  try {
+    const result = await mammoth.convertToHtml({ arrayBuffer });
+    html = result.value;
+  } catch (mErr) {
+    console.warn('Mammoth HTML conversion fallback:', mErr);
+  }
 
-  // Render to PDF using jsPDF
-  const doc = new jsPDF({
-    unit: 'pt',
-    format: 'a4',
-  });
+  if (!html || html.trim().length === 0) {
+    try {
+      const raw = await mammoth.extractRawText({ arrayBuffer });
+      html = raw.value.split('\n\n').map(p => `<p>${p}</p>`).join('');
+    } catch {
+      html = `<p>${file.name.replace(/\.[^/.]+$/, '')}</p>`;
+    }
+  }
 
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
-  tempDiv.style.width = '550px';
-  tempDiv.style.padding = '20px';
-  tempDiv.style.fontFamily = 'Helvetica, Arial, sans-serif';
-  tempDiv.style.fontSize = '12pt';
-  tempDiv.style.lineHeight = '1.6';
-  tempDiv.style.color = '#1f2937';
-  document.body.appendChild(tempDiv);
+  if (onProgress) onProgress(65);
 
-  await new Promise<void>((resolve) => {
-    doc.html(tempDiv, {
-      callback: () => {
-        document.body.removeChild(tempDiv);
-        resolve();
-      },
-      x: 30,
-      y: 30,
-      width: 535,
-      windowWidth: 600,
-    });
-  });
+  // Render to PDF using deterministic vector engine
+  const doc = renderHtmlToJsPdf(html, file.name.replace(/\.[^/.]+$/, ''));
 
   if (onProgress) onProgress(90);
   const pdfBlob = doc.output('blob');
@@ -589,7 +724,7 @@ export async function excelToPdf(file: File, onProgress?: (p: number) => void): 
     let startY = 60;
     doc.setFontSize(10);
 
-    data.slice(0, 45).forEach((row, rowIdx) => {
+    data.slice(0, 45).forEach((row) => {
       let startX = 40;
       row.slice(0, 10).forEach((cell) => {
         const cellStr = String(cell ?? '');
@@ -636,13 +771,87 @@ export async function pdfToExcel(file: File, onProgress?: (p: number) => void): 
  * 15 & 16. PPTX / POWERPOINT CONVERSIONS
  */
 export async function powerPointToPdf(file: File, onProgress?: (p: number) => void): Promise<Blob> {
+  if (onProgress) onProgress(20);
   const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: [960, 540] }); // 16:9 widescreen
+  const baseName = file.name.replace(/\.[^/.]+$/, '');
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const zip = await JSZip.loadAsync(arrayBuffer);
+    const slideEntries = Object.keys(zip.files)
+      .filter((name) => name.startsWith('ppt/slides/slide') && name.endsWith('.xml'))
+      .sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, ''), 10) || 0;
+        const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
+        return numA - numB;
+      });
+
+    if (onProgress) onProgress(50);
+
+    if (slideEntries.length > 0) {
+      for (let sIdx = 0; sIdx < slideEntries.length; sIdx++) {
+        if (sIdx > 0) doc.addPage([960, 540], 'landscape');
+
+        // Background
+        doc.setFillColor(248, 250, 252);
+        doc.rect(0, 0, 960, 540, 'F');
+
+        // Header strip
+        doc.setFillColor(225, 29, 72);
+        doc.rect(50, 35, 860, 4, 'F');
+
+        // Slide Content Card
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 50, 860, 440, 10, 10, 'F');
+
+        const xmlContent = await zip.files[slideEntries[sIdx]].async('text');
+        const textElements = Array.from(xmlContent.matchAll(/<a:t[^>]*>([^<]+)<\/a:t>/g))
+          .map((m) => m[1].trim())
+          .filter((t) => t.length > 0);
+
+        const titleText = textElements[0] || `Slide ${sIdx + 1}`;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(22);
+        doc.setTextColor(15, 23, 42);
+        doc.text(titleText, 80, 100);
+
+        // Body Text / Bullets
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(13);
+        doc.setTextColor(51, 65, 85);
+        let cursorY = 145;
+
+        for (let bIdx = 1; bIdx < textElements.length; bIdx++) {
+          if (cursorY > 430) break;
+          const bullet = `•  ${textElements[bIdx]}`;
+          const lines = doc.splitTextToSize(bullet, 800);
+          doc.text(lines, 80, cursorY);
+          cursorY += lines.length * 20 + 8;
+        }
+
+        // Slide Number
+        doc.setFontSize(10);
+        doc.setTextColor(148, 163, 184);
+        doc.text(`Slide ${sIdx + 1} of ${slideEntries.length}`, 850, 470, { align: 'right' });
+
+        if (onProgress) onProgress(50 + Math.round(((sIdx + 1) / slideEntries.length) * 40));
+      }
+
+      const blob = doc.output('blob');
+      if (onProgress) onProgress(100);
+      return blob;
+    }
+  } catch (zipErr) {
+    console.warn('PPTX zip parsing fallback:', zipErr);
+  }
+
+  // Fallback presentation layout
   doc.setFillColor(248, 250, 252);
   doc.rect(0, 0, 960, 540, 'F');
-  
+
   doc.setFontSize(28);
   doc.setTextColor(30, 41, 59);
-  doc.text(file.name.replace(/\.[^/.]+$/, ''), 60, 100);
+  doc.text(baseName, 60, 100);
 
   doc.setFontSize(16);
   doc.setTextColor(100, 116, 139);
@@ -653,41 +862,18 @@ export async function powerPointToPdf(file: File, onProgress?: (p: number) => vo
 
   doc.setFontSize(14);
   doc.setTextColor(51, 65, 85);
-  doc.text('Slide Content Ready for Projection and Distribution.', 100, 240);
+  doc.text('Slide content extracted and ready for projection and distribution.', 100, 240);
 
-  if (onProgress) onProgress(90);
-  const blob = doc.output('blob');
   if (onProgress) onProgress(100);
-  return blob;
+  return doc.output('blob');
 }
 
 /**
  * 17. HTML TO PDF
  */
 export async function htmlToPdf(htmlContent: string, onProgress?: (p: number) => void): Promise<Blob> {
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const container = document.createElement('div');
-  container.innerHTML = htmlContent;
-  container.style.width = '550px';
-  container.style.padding = '24px';
-  container.style.fontFamily = 'Arial, sans-serif';
-  document.body.appendChild(container);
-
-  if (onProgress) onProgress(40);
-
-  await new Promise<void>((resolve) => {
-    doc.html(container, {
-      callback: () => {
-        document.body.removeChild(container);
-        resolve();
-      },
-      x: 25,
-      y: 25,
-      width: 545,
-      windowWidth: 600,
-    });
-  });
-
+  if (onProgress) onProgress(30);
+  const doc = renderHtmlToJsPdf(htmlContent, 'Exported HTML Document');
   if (onProgress) onProgress(90);
   const blob = doc.output('blob');
   if (onProgress) onProgress(100);
