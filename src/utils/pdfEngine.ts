@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, degrees, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, degrees, StandardFonts } from '@cantoo/pdf-lib';
 import { jsPDF } from 'jspdf';
 import JSZip from 'jszip';
 import * as docx from 'docx';
@@ -1338,34 +1338,78 @@ export async function protectPdf(
   password: string,
   onProgress?: (p: number) => void
 ): Promise<Blob> {
+  if (!password || !password.trim()) {
+    throw new Error('Please enter a password to protect the document.');
+  }
+
+  if (onProgress) onProgress(20);
   const fileBytes = await file.arrayBuffer();
+  if (onProgress) onProgress(45);
+
   const pdfDoc = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
 
-  pdfDoc.setTitle(`${file.name.replace('.pdf', '')} [Protected]`);
-  pdfDoc.setSubject('Password Encrypted Document');
+  // Standard PDF RC4 128-bit / AES encryption with permissions
+  await pdfDoc.encrypt({
+    userPassword: password.trim(),
+    ownerPassword: password.trim(),
+    permissions: {
+      modifying: false,
+      copying: false,
+      annotating: false,
+      fillingForms: false,
+      contentAccessibility: true,
+      documentAssembly: false,
+      printing: 'highResolution',
+    },
+  });
 
-  if (onProgress) onProgress(80);
-  // pdf-lib embeds protected document signature
+  if (onProgress) onProgress(85);
   const pdfBytes = await pdfDoc.save();
   if (onProgress) onProgress(100);
   return new Blob([pdfBytes], { type: 'application/pdf' });
 }
 
 /**
- * 31. UNLOCK PDF
+ * 31. UNLOCK PDF (Password Decryption)
  */
 export async function unlockPdf(
   file: File,
-  _passwordAttempt?: string,
+  passwordAttempt?: string,
   onProgress?: (p: number) => void
 ): Promise<Blob> {
+  if (onProgress) onProgress(20);
   const fileBytes = await file.arrayBuffer();
   if (onProgress) onProgress(40);
 
-  const pdfDoc = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
-  if (onProgress) onProgress(80);
+  const trimmedPassword = passwordAttempt ? passwordAttempt.trim() : undefined;
 
-  const pdfBytes = await pdfDoc.save();
+  let srcDoc: PDFDocument;
+  try {
+    srcDoc = await PDFDocument.load(fileBytes, {
+      password: trimmedPassword || undefined,
+    });
+  } catch (err: any) {
+    const msg = String(err?.message || '');
+    if (msg.includes('Password incorrect') || msg.includes('Incorrect password')) {
+      throw new Error('Incorrect password provided. Please verify the password and try again.');
+    }
+    if (err?.name === 'EncryptedPDFError' || msg.includes('encrypted') || msg.includes('Password required')) {
+      throw new Error('This PDF is password-protected. Please enter the correct password to unlock it.');
+    }
+    throw new Error(`Unable to unlock document: ${err?.message || 'Invalid password or format'}`);
+  }
+
+  if (onProgress) onProgress(70);
+
+  // Generate a completely clean, unencrypted PDF containing all original pages
+  const cleanDoc = await PDFDocument.create();
+  const pageCount = srcDoc.getPageCount();
+  const pageIndices = Array.from({ length: pageCount }, (_, i) => i);
+  const copiedPages = await cleanDoc.copyPages(srcDoc, pageIndices);
+  copiedPages.forEach((p) => cleanDoc.addPage(p));
+
+  if (onProgress) onProgress(90);
+  const pdfBytes = await cleanDoc.save();
   if (onProgress) onProgress(100);
   return new Blob([pdfBytes], { type: 'application/pdf' });
 }

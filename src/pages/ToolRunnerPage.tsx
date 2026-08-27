@@ -680,6 +680,9 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
 
         // 33. UNLOCK PDF
         case 'unlock-pdf': {
+          if (!unlockPassword || !unlockPassword.trim()) {
+            throw new Error('Please enter the current document password to unlock this PDF.');
+          }
           const blob = await unlockPdf(mainFile, unlockPassword, setProgress);
           setResult({
             blob,
@@ -1194,33 +1197,39 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
 
                   {/* PROTECT PASSWORD */}
                   {tool.slug === 'protect-pdf' && (
-                    <div>
-                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                        Set Password:
+                    <div className="space-y-2">
+                      <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+                        Document Protection Password:
                       </label>
                       <input
                         type="password"
                         value={protectPassword}
                         onChange={(e) => setProtectPassword(e.target.value)}
-                        placeholder="Enter secure password..."
-                        className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg"
+                        placeholder="Enter secure encryption password..."
+                        className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-colors"
                       />
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Applies standard PDF encryption with user/owner protection. Any PDF reader (Adobe Acrobat, Chrome, Edge, Apple Preview) will require this password to view the document.
+                      </p>
                     </div>
                   )}
 
                   {/* UNLOCK PASSWORD */}
                   {tool.slug === 'unlock-pdf' && (
-                    <div>
-                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                        Enter current PDF password:
+                    <div className="space-y-2">
+                      <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+                        Current Document Password:
                       </label>
                       <input
                         type="password"
                         value={unlockPassword}
                         onChange={(e) => setUnlockPassword(e.target.value)}
-                        placeholder="Enter password..."
-                        className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg"
+                        placeholder="Enter document password to remove lock..."
+                        className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-colors"
                       />
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Decrypts the PDF and removes encryption restrictions, producing an unencrypted PDF that opens freely anywhere.
+                      </p>
                     </div>
                   )}
                 </div>
