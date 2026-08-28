@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { CATEGORIES_CONFIG, TOOLS_DATA } from '../data/toolsData';
 import { ToolCategory } from '../types';
+import { InstallAppButton } from './InstallAppButton';
 
 interface HeaderProps {
   onNavigateHome: () => void;
@@ -179,6 +180,9 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Action Icons */}
           <div className="flex items-center gap-2">
+            {/* Install App Button (Desktop & Tablet) */}
+            <InstallAppButton variant="header" />
+
             {/* Quick Search Button */}
             <button
               type="button"
@@ -218,6 +222,11 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
+          {/* Mobile Install App Button */}
+          <div className="pb-1">
+            <InstallAppButton variant="mobile-drawer" />
+          </div>
+
           <div className="space-y-1">
             <button
               onClick={() => {
