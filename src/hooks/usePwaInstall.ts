@@ -16,8 +16,17 @@ export function usePwaInstall() {
   const [isIos, setIsIos] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showIosModal, setShowIosModal] = useState(false);
+  const [isBannerDismissed, setIsBannerDismissed] = useState(true);
 
   useEffect(() => {
+    // Check banner dismissed state in localStorage
+    try {
+      const dismissed = localStorage.getItem('toolmaster_pwa_banner_dismissed') === 'true';
+      setIsBannerDismissed(dismissed);
+    } catch {
+      setIsBannerDismissed(false);
+    }
+
     // 1. Detect if running in standalone/installed mode
     const checkStandalone = () => {
       const isStandaloneMode =
@@ -69,6 +78,15 @@ export function usePwaInstall() {
     };
   }, []);
 
+  const dismissBanner = useCallback(() => {
+    try {
+      localStorage.setItem('toolmaster_pwa_banner_dismissed', 'true');
+    } catch (e) {
+      console.warn('LocalStorage not accessible', e);
+    }
+    setIsBannerDismissed(true);
+  }, []);
+
   const triggerInstall = useCallback(async () => {
     if (isInstalled || isStandalone) {
       return;
@@ -104,6 +122,7 @@ export function usePwaInstall() {
   // - Not previously marked as installed
   // - Either beforeinstallprompt fired (Android/Chrome/Edge) OR it's an iOS device
   const canShowButton = !isStandalone && !isInstalled && (isInstallable || isIos);
+  const canShowBanner = canShowButton && !isBannerDismissed;
 
   return {
     isInstallable,
@@ -111,6 +130,9 @@ export function usePwaInstall() {
     isIos,
     isStandalone,
     canShowButton,
+    canShowBanner,
+    isBannerDismissed,
+    dismissBanner,
     showIosModal,
     setShowIosModal,
     triggerInstall,

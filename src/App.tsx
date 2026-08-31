@@ -6,6 +6,7 @@ import { BLOG_POSTS } from './data/blogData';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
+import { PwaInstallBanner } from './components/PwaInstallBanner';
 import { HomePage } from './pages/HomePage';
 import { ToolRunnerPage } from './pages/ToolRunnerPage';
 import { AboutPage } from './pages/AboutPage';
@@ -264,6 +265,9 @@ export default function App() {
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
       />
+
+      {/* Slim Dismissible PWA Install Banner */}
+      <PwaInstallBanner />
 
       {/* Main Content Area */}
       <div className="flex-1">{renderPage()}</div>

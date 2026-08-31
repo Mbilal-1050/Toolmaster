@@ -2,6 +2,7 @@ import React from 'react';
 import { FileText, Shield, Heart, Lock, Globe, ExternalLink } from 'lucide-react';
 import { CATEGORIES_CONFIG, TOOLS_DATA } from '../data/toolsData';
 import { ProductHuntBadge } from './ProductHuntBadge';
+import { PeerlistBadge } from './PeerlistBadge';
 
 interface FooterProps {
   onNavigateHome: () => void;
@@ -56,9 +57,10 @@ export const Footer: React.FC<FooterProps> = ({
               </div>
             </div>
 
-            {/* Product Hunt Badge */}
-            <div className="pt-2">
+            {/* Community & Launch Badges */}
+            <div className="pt-2 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-start gap-2.5">
               <ProductHuntBadge theme="dark" />
+              <PeerlistBadge theme="dark" />
             </div>
           </div>
 

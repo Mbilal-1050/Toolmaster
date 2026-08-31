@@ -17,6 +17,7 @@ import { HowItWorks } from '../components/HowItWorks';
 import { AdSlot } from '../components/AdSlot';
 import { SeoStructuredData } from '../components/SeoStructuredData';
 import { ProductHuntBadge, ProductHuntLaunchCard } from '../components/ProductHuntBadge';
+import { PeerlistBadge, PeerlistLaunchCard } from '../components/PeerlistBadge';
 import { BLOG_POSTS } from '../data/blogData';
 
 interface HomePageProps {
@@ -156,7 +157,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             })}
           </motion.div>
 
-          {/* Product Hunt Featured Badge */}
+          {/* Launch Badges (Product Hunt & Peerlist) */}
           <motion.div
             initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -165,9 +166,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               delay: prefersReduced ? 0 : 0.8,
               ease: 'easeOut',
             }}
-            className="mt-8 flex justify-center"
+            className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
           >
             <ProductHuntBadge />
+            <PeerlistBadge />
           </motion.div>
         </div>
       </section>
@@ -175,9 +177,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Trust Signals Section */}
       <TrustBadges />
 
-      {/* Product Hunt Launch Card Banner */}
-      <div className="max-w-7xl mx-auto px-4 mt-6">
+      {/* Launch Cards Banner (Product Hunt & Peerlist) */}
+      <div className="max-w-5xl mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProductHuntLaunchCard />
+        <PeerlistLaunchCard />
       </div>
 
       {/* Top AdSlot */}
