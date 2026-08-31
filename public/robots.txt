@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.freetoolmaster.online/sitemap.xml
+
+# LLM Information
+# https://www.freetoolmaster.online/llms.txt

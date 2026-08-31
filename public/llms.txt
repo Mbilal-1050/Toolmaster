@@ -1,0 +1,67 @@
+# ToolMaster
+
+> Free, privacy-first PDF tool suite — 34+ tools that run 100% client-side in the browser, with zero file uploads to any server.
+
+ToolMaster provides merge, split, compress, convert, sign, watermark, and password-protection tools for PDF files. Every tool processes documents entirely in the user's browser using JavaScript and WebAssembly — no file is ever uploaded to a server, making it a privacy-focused, zero-leakage alternative to typical online PDF utilities.
+
+## Core PDF Tools
+
+### Organize PDF
+- [Merge PDF](https://www.freetoolmaster.online/merge-pdf): Combine multiple PDF files into one single document in any order.
+- [Split PDF](https://www.freetoolmaster.online/split-pdf): Extract individual pages or custom page ranges into separate PDFs.
+- [Reorder PDF Pages](https://www.freetoolmaster.online/reorder-pdf): Rearrange and reorder pages of your PDF with live visual thumbnails.
+- [Delete PDF Pages](https://www.freetoolmaster.online/delete-pages): Remove unwanted, blank, or duplicate pages from your PDF file.
+- [Rotate PDF](https://www.freetoolmaster.online/rotate-pdf): Rotate PDF pages permanently 90°, 180°, or 270° clockwise or counter-clockwise.
+- [Crop PDF](https://www.freetoolmaster.online/crop-pdf): Trim margins, headers, or footers from PDF pages to fit any canvas.
+- [Extract Images from PDF](https://www.freetoolmaster.online/extract-images): Extract all high-resolution pages and embedded images as a ZIP archive.
+- [Insert Image into PDF](https://www.freetoolmaster.online/insert-pdf-image): Append or merge photos and graphics directly into an existing PDF.
+
+### Convert PDF
+- [PDF to JPG](https://www.freetoolmaster.online/pdf-to-jpg): Convert each PDF page into high-quality JPG images downloaded as a ZIP.
+- [PDF to PNG](https://www.freetoolmaster.online/pdf-to-png): Export PDF pages to lossless PNG images with transparent/clean backgrounds.
+- [JPG to PDF](https://www.freetoolmaster.online/jpg-to-pdf): Convert multiple JPG, PNG, and WEBP pictures into a unified PDF file.
+- [Word to PDF](https://www.freetoolmaster.online/word-to-pdf): Convert DOCX documents into clean, non-editable PDF format.
+- [PDF to Word](https://www.freetoolmaster.online/pdf-to-word): Extract structured text and formatting from PDF into an editable DOCX file.
+- [Excel to PDF](https://www.freetoolmaster.online/excel-to-pdf): Convert Excel spreadsheets (.xlsx, .xls, .csv) to printable PDF reports.
+- [PDF to Excel](https://www.freetoolmaster.online/pdf-to-excel): Extract tables and structured data from PDF into an editable XLSX spreadsheet.
+- [PowerPoint to PDF](https://www.freetoolmaster.online/powerpoint-to-pdf): Convert presentation slides (.pptx, .ppt, images) into a seamless PDF slide deck.
+- [PDF to PowerPoint](https://www.freetoolmaster.online/pdf-to-powerpoint): Convert PDF document pages into an editable Microsoft PowerPoint (.pptx) presentation.
+- [HTML to PDF](https://www.freetoolmaster.online/html-to-pdf): Render HTML code, formatted snippets, or web content into a styled PDF.
+- [PDF to HTML](https://www.freetoolmaster.online/pdf-to-html): Convert PDF layout and formatted content into clean HTML5 markup.
+- [TXT to PDF](https://www.freetoolmaster.online/txt-to-pdf): Convert plain text, markdown, or code logs into formatted PDF documents.
+- [PDF to Text](https://www.freetoolmaster.online/pdf-to-text): Extract all raw and formatted text from any PDF document.
+- [CSV to PDF](https://www.freetoolmaster.online/csv-to-pdf): Convert comma-separated CSV files into styled, formatted PDF tables.
+- [PDF to PDF/A](https://www.freetoolmaster.online/pdf-to-pdfa): Standardize PDF files into ISO-compliant PDF/A format for long-term archiving.
+- [PDF to Grayscale](https://www.freetoolmaster.online/pdf-to-grayscale): Convert colored PDF documents to crisp black & white / grayscale for printing.
+
+### Edit & Sign
+- [Add Watermark](https://www.freetoolmaster.online/add-watermark): Add custom text or image watermarks with full opacity, angle, and position control.
+- [Add Page Numbers](https://www.freetoolmaster.online/add-page-numbers): Insert customized page numbers into header or footer with customizable formats.
+- [Stamp PDF](https://www.freetoolmaster.online/stamp-pdf): Overlay business stamps like APPROVED, CONFIDENTIAL, PAID, or custom labels.
+- [Edit PDF Metadata](https://www.freetoolmaster.online/edit-metadata): Modify Title, Author, Subject, Keywords, and Creation Date properties.
+- [Sign PDF](https://www.freetoolmaster.online/sign-pdf): Draw, type, or upload your signature and place it anywhere on your PDF.
+- [Flatten PDF](https://www.freetoolmaster.online/flatten-pdf): Merge interactive form fields, layers, and annotations into static non-editable page content.
+- [Repair PDF](https://www.freetoolmaster.online/repair-pdf): Recover and repair corrupted, damaged, or unreadable PDF structures.
+
+### PDF Security & Optimization
+- [Protect PDF](https://www.freetoolmaster.online/protect-pdf): Encrypt your PDF with standard passwords and security restrictions.
+- [Unlock PDF](https://www.freetoolmaster.online/unlock-pdf): Remove password protection and permissions security from your PDF.
+- [Compress PDF](https://www.freetoolmaster.online/compress-pdf): Reduce PDF file size while maintaining optimal visual clarity.
+
+## About & Policies
+- [About Us](https://www.freetoolmaster.online/about): Overview of ToolMaster's client-side architecture and zero-retention privacy guarantee.
+- [Privacy Policy](https://www.freetoolmaster.online/privacy-policy): Detailed privacy statement confirming zero document uploads to any server.
+- [Terms of Service](https://www.freetoolmaster.online/terms): Usage conditions and terms of service.
+- [Cookie Policy](https://www.freetoolmaster.online/cookie-policy): Information on local storage usage and anonymous site telemetry.
+- [Contact Us](https://www.freetoolmaster.online/contact): Support and direct user inquiries.
+
+## Blog & Guides
+- [Blog Overview](https://www.freetoolmaster.online/blog): Technical tutorials and document management guides.
+- [How to Compress a PDF Without Losing Visual Quality](https://www.freetoolmaster.online/blog/how-to-compress-pdf-without-losing-quality): Techniques to shrink PDF file sizes by up to 80% with lossless vector streams.
+- [How to Merge PDF Files Online for Free](https://www.freetoolmaster.online/blog/how-to-merge-pdf-files-for-free): Step-by-step tutorial on combining multiple PDFs without upload limits.
+- [PDF vs Word (DOCX): Which Format Should You Use?](https://www.freetoolmaster.online/blog/pdf-vs-word-which-format-to-use): Deep comparison covering layout stability, editing flexibility, and security.
+- [How to Digitally Sign a PDF in Your Web Browser](https://www.freetoolmaster.online/blog/how-to-digitally-sign-a-pdf-securely): Secure, paperless electronic signature walkthrough.
+- [The Complete Guide to PDF Security](https://www.freetoolmaster.online/blog/complete-guide-to-pdf-security-and-passwords): Understanding PDF encryption, owner/user passwords, and permission flags.
+- [How to Convert PDF to High-Resolution JPG and PNG](https://www.freetoolmaster.online/blog/how-to-convert-pdf-to-high-res-jpg-png): Rasterizing PDF pages into crisp images directly in browser memory.
+- [Why Client-Side PDF Processing is Better for Privacy and Speed](https://www.freetoolmaster.online/blog/why-client-side-pdf-processing-is-better): How modern WebAssembly and JavaScript eliminate server upload vulnerabilities.
+- [How to Split, Extract, and Reorder PDF Pages in Seconds](https://www.freetoolmaster.online/blog/how-to-split-and-extract-pdf-pages): Guide to page manipulation, reordering thumbnails, and custom extraction ranges.
