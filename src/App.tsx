@@ -145,6 +145,15 @@ export default function App() {
       document.head.appendChild(canonicalLink);
     }
     canonicalLink.setAttribute('href', fullCanonicalUrl);
+
+    // Send pageview to Google Analytics (gtag.js) if loaded
+    if (typeof window !== 'undefined' && typeof (window as unknown as { gtag?: Function }).gtag === 'function') {
+      (window as unknown as { gtag: Function }).gtag('event', 'page_view', {
+        page_title: title,
+        page_location: fullCanonicalUrl,
+        page_path: canonicalPath,
+      });
+    }
   };
 
   useEffect(() => {
