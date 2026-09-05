@@ -13,7 +13,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigateBlogPost, 
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Optimization', 'Document Management', 'Formats & Standards', 'Security & Legal', 'Image Conversion', 'Architecture & Privacy'];
+  const categories = ['All', ...Array.from(new Set(BLOG_POSTS.map((p) => p.category)))];
 
   const filteredPosts = BLOG_POSTS.filter((post) => {
     const matchesCat = selectedCategory === 'All' || post.category === selectedCategory;

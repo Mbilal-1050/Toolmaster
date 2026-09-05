@@ -20,6 +20,9 @@ import {
   MoveUp,
   MoveDown,
   Trash,
+  Cpu,
+  Lock,
+  Globe,
 } from 'lucide-react';
 import { ToolItem, ProcessedFileResult } from '../types';
 import { resolveToolIcon } from '../components/ToolGrid';
@@ -1421,6 +1424,96 @@ export const ToolRunnerPage: React.FC<ToolRunnerPageProps> = ({ tool, onNavigate
             </div>
           </section>
         )}
+
+        {/* 4.5. ARCHITECTURE & SPECIFICATIONS DEEP DIVE (Essential for AdSense Content Depth & User Guidance) */}
+        <section className="mt-8 bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-10 border border-slate-200 dark:border-slate-800 space-y-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-full mb-3">
+              <Cpu className="w-3.5 h-3.5" />
+              <span>Engine Architecture & Performance</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Why In-Browser {tool.name} Outperforms Cloud Converters
+            </h2>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Traditional web converters require you to transmit private documents over the public internet to third-party server farms, exposing your financial, medical, and legal records to data breaches and server retention policies. ToolMaster executes <strong>{tool.name}</strong> 100% locally inside your web browser using sandboxed WebAssembly and optimized JavaScript runtime engines.
+            </p>
+          </div>
+
+          {/* Technical Specifications Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
+                <FileCheck className="w-4 h-4 text-rose-600" />
+                Accepted Formats
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white uppercase">
+                {tool.acceptedFiles || '.pdf'}
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                Standard MIME streams
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
+                <Zap className="w-4 h-4 text-amber-500" />
+                Processing Speed
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                Near Instantaneous
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                0s upload & download lag
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
+                <Lock className="w-4 h-4 text-emerald-500" />
+                Privacy & Retention
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                Zero Cloud Uploads
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                Never touches a remote server
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
+                <Globe className="w-4 h-4 text-blue-500" />
+                Cross-Platform
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                Universal Support
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                Chrome, Safari, Edge, Firefox
+              </p>
+            </div>
+          </div>
+
+          {/* Best Practices Box */}
+          <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-rose-600" />
+              Pro Tips & Best Practices for {tool.name}
+            </h3>
+            <ul className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 space-y-2 list-disc list-inside">
+              <li>
+                <strong>Preserve Original Backups:</strong> Although ToolMaster processes files losslessly in local memory, we always recommend keeping a copy of your source document on your computer.
+              </li>
+              <li>
+                <strong>Offline Processing:</strong> Once the page is loaded into your web browser, our service worker caches the core modules, allowing many operations to proceed uninterrupted even if your internet connection fluctuates.
+              </li>
+              <li>
+                <strong>Memory Clean-up:</strong> Once you complete your download and navigate away or refresh the page, your browser's V8 engine automatically garbage collects all temporary memory buffers.
+              </li>
+            </ul>
+          </div>
+        </section>
 
         {/* 5. RELATED TOOLS SECTION (Internal Linking for SEO) */}
         {tool.relatedToolSlugs && tool.relatedToolSlugs.length > 0 && (

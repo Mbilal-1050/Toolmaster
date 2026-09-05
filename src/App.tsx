@@ -207,7 +207,7 @@ export default function App() {
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', fullCanonicalUrl);
 
-    // Structured data (Schema.org WebApplication for tool pages)
+    // Structured data (Schema.org WebApplication, BlogPosting, WebSite)
     let schemaScript = document.getElementById('schema-structured-data') as HTMLScriptElement | null;
     if (page.type === 'tool') {
       const tool = TOOLS_DATA.find((t) => t.slug === page.slug);
@@ -234,6 +234,56 @@ export default function App() {
         }
         schemaScript.textContent = JSON.stringify(schemaData);
       }
+    } else if (page.type === 'blog-post') {
+      const post = BLOG_POSTS.find((p) => p.slug === page.slug);
+      if (post) {
+        const schemaData = {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          url: fullCanonicalUrl,
+          datePublished: '2026-02-01',
+          author: {
+            '@type': 'Person',
+            name: post.author,
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'ToolMaster',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://www.freetoolmaster.online/favicon.svg',
+            },
+          },
+        };
+        if (!schemaScript) {
+          schemaScript = document.createElement('script');
+          schemaScript.id = 'schema-structured-data';
+          schemaScript.type = 'application/ld+json';
+          document.head.appendChild(schemaScript);
+        }
+        schemaScript.textContent = JSON.stringify(schemaData);
+      }
+    } else if (page.type === 'home') {
+      const schemaData = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'ToolMaster',
+        url: 'https://www.freetoolmaster.online',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://www.freetoolmaster.online/?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      };
+      if (!schemaScript) {
+        schemaScript = document.createElement('script');
+        schemaScript.id = 'schema-structured-data';
+        schemaScript.type = 'application/ld+json';
+        document.head.appendChild(schemaScript);
+      }
+      schemaScript.textContent = JSON.stringify(schemaData);
     } else if (schemaScript) {
       schemaScript.remove();
     }
