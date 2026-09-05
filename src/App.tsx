@@ -9,6 +9,7 @@ import { CookieBanner } from './components/CookieBanner';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
 import { HomePage } from './pages/HomePage';
 import { ToolRunnerPage } from './pages/ToolRunnerPage';
+import { BackgroundRemoverPage } from './pages/BackgroundRemoverPage';
 import { AboutPage } from './pages/AboutPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsPage } from './pages/TermsPage';
@@ -73,6 +74,12 @@ export default function App() {
       if (post) return { type: 'blog-post', slug: blogSlug };
     }
 
+    if (pathname.startsWith('tools/')) {
+      const toolSlug = pathname.replace('tools/', '');
+      const tool = TOOLS_DATA.find((t) => t.slug === toolSlug);
+      if (tool) return { type: 'tool', slug: tool.slug };
+    }
+
     const tool = TOOLS_DATA.find((t) => t.slug === pathname);
     if (tool) return { type: 'tool', slug: tool.slug };
 
@@ -92,8 +99,13 @@ export default function App() {
       case 'tool': {
         const tool = TOOLS_DATA.find((t) => t.slug === page.slug);
         if (tool) {
-          title = `${tool.name} Online Free - 100% In-Browser & Private | ToolMaster`;
-          canonicalPath = `/${tool.slug}`;
+          if (tool.slug === 'background-remover') {
+            title = 'Free Background Remover Online - Remove Image Background Instantly | ToolMaster';
+            canonicalPath = '/tools/background-remover';
+          } else {
+            title = `${tool.name} Online Free - 100% In-Browser & Private | ToolMaster`;
+            canonicalPath = `/${tool.slug}`;
+          }
         }
         break;
       }
@@ -187,7 +199,10 @@ export default function App() {
   };
 
   const handleNavigateHome = () => navigateTo({ type: 'home' }, '');
-  const handleNavigateTool = (slug: string) => navigateTo({ type: 'tool', slug }, slug);
+  const handleNavigateTool = (slug: string) => {
+    const routePath = slug === 'background-remover' ? `tools/${slug}` : slug;
+    navigateTo({ type: 'tool', slug }, routePath);
+  };
   const handleNavigateAbout = () => navigateTo({ type: 'about' }, 'about');
   const handleNavigatePrivacy = () => navigateTo({ type: 'privacy' }, 'privacy-policy');
   const handleNavigateTerms = () => navigateTo({ type: 'terms' }, 'terms-of-service');
@@ -212,6 +227,15 @@ export default function App() {
       case 'tool': {
         const tool = TOOLS_DATA.find((t) => t.slug === currentPage.slug);
         if (!tool) return <NotFoundPage onNavigateHome={handleNavigateHome} onNavigateTool={handleNavigateTool} />;
+        if (tool.slug === 'background-remover') {
+          return (
+            <BackgroundRemoverPage
+              tool={tool}
+              onNavigateTool={handleNavigateTool}
+              onNavigateHome={handleNavigateHome}
+            />
+          );
+        }
         return (
           <ToolRunnerPage
             tool={tool}

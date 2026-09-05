@@ -40,6 +40,9 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
+  Scissors,
+  Eraser,
+  Wand2,
   X,
 } from 'lucide-react';
 import { TOOLS_DATA, CATEGORIES_CONFIG } from '../data/toolsData';
@@ -84,6 +87,9 @@ export const resolveToolIcon = (iconName: string) => {
     Unlock,
     Minimize2,
     ShieldCheck,
+    Scissors,
+    Eraser,
+    Wand2,
   };
   return map[iconName] || FileText;
 };

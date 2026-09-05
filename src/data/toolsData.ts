@@ -523,6 +523,31 @@ export const TOOLS_DATA: ToolItem[] = [
 
   // ==================== EDIT & SIGN ====================
   {
+    id: 'background-remover',
+    slug: 'background-remover',
+    name: 'Background Remover',
+    shortDesc: 'Remove image backgrounds automatically 100% in-browser with AI precision.',
+    fullDesc: 'Automatically isolate subjects and erase backgrounds from JPG, PNG, and WEBP photos using client-side AI. Zero server uploads, completely free, with interactive before/after comparison and instant transparent PNG download.',
+    category: 'edit',
+    iconName: 'Scissors',
+    badge: 'AI Powered',
+    acceptedFiles: '.png,.jpg,.jpeg,.webp',
+    allowMultiple: false,
+    keywords: ['remove background free', 'background remover online', 'transparent background png', 'ai background eraser', 'cutout image free', 'remove bg without signup'],
+    steps: [
+      { title: 'Upload Photo', desc: 'Select or drag any PNG, JPG, or WEBP image file from your device.' },
+      { title: 'AI Automatic Cutout', desc: 'Our in-browser neural network detects subjects and removes backgrounds in seconds.' },
+      { title: 'Download Transparent PNG', desc: 'Preview your cutout against custom backdrops and download in full resolution.' }
+    ],
+    faqs: [
+      { q: 'Is this Background Remover really 100% free and private?', a: 'Yes! Unlike cloud services that charge credits or upload your images to third-party servers, ToolMaster runs the AI neural model directly inside your browser via WebAssembly. Your photos never leave your device.' },
+      { q: 'Which image formats are supported?', a: 'You can upload PNG, JPG, JPEG, and WEBP images. The output is a crystal-clear transparent 32-bit PNG.' },
+      { q: 'Why does the first removal take a few seconds?', a: 'On first use, your browser downloads the lightweight neural network model directly from CDN and caches it. Subsequent removals are much faster directly from local cache.' },
+      { q: 'Can I choose different quality modes?', a: 'Yes, you can toggle between Fast, Balanced, and Ultra Precision modes depending on your device performance.' }
+    ],
+    relatedToolSlugs: ['extract-images', 'jpg-to-pdf', 'pdf-to-png', 'insert-pdf-image']
+  },
+  {
     id: 'add-watermark',
     slug: 'add-watermark',
     name: 'Add Watermark',

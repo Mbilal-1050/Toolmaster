@@ -3,12 +3,17 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
+// Log Cross-Origin Isolation status for multi-threaded WASM / SharedArrayBuffer verification
+if (typeof window !== 'undefined') {
+  console.log('crossOriginIsolated:', window.crossOriginIsolated);
+}
+
 // Register Service Worker for PWA installability
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
-      .then((reg) => {
+      .then(() => {
         // Successfully registered service worker
       })
       .catch((err) => {
@@ -22,4 +27,3 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 );
-

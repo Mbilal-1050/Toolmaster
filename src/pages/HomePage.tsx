@@ -70,7 +70,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/70 border border-rose-200/70 dark:border-rose-900/70 text-rose-600 dark:text-rose-400 text-xs font-bold mb-6 shadow-2xs"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>33+ Powerful PDF Tools • 100% Free & Private</span>
+            <span>34+ Powerful Browser Tools • 100% Free & Private</span>
           </motion.div>
 
           {/* Staggered Animated Headline */}

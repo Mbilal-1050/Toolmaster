@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
                         {toolsInCat.map((tool) => (
                           <a
                             key={tool.id}
-                            href={`/${tool.slug}`}
+                            href={tool.slug === 'background-remover' ? `/tools/${tool.slug}` : `/${tool.slug}`}
                             onClick={(e) => {
                               if (!e.ctrlKey && !e.metaKey) {
                                 e.preventDefault();
