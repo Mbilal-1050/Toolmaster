@@ -7,10 +7,7 @@
  *   logos, or solid green/white screens.
  */
 
-import * as imgly from '@imgly/background-removal';
-import type { Config } from '@imgly/background-removal';
-
-const imglyRemoveBackground = imgly.removeBackground || (imgly as any).default;
+import { removeBackground, type Config } from '@imgly/background-removal';
 
 export interface InstantCutoutOptions {
   tolerance?: number; // 0 to 100 (default: 32)
@@ -100,7 +97,7 @@ export async function removeBackgroundAI(
     },
   };
 
-  const aiPromise = imglyRemoveBackground(file, config);
+  const aiPromise = removeBackground(file, config);
 
   const timeoutPromise = new Promise<never>((_, reject) => {
     const timer = setTimeout(() => {
