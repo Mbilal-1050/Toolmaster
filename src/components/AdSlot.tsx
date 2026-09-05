@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface AdSlotProps {
   id: string;
-  slotType?: 'header' | 'sidebar' | 'in-content' | 'footer';
+  slotType?: 'header' | 'sidebar' | 'in-content' | 'footer' | 'top-banner';
   className?: string;
 }
 
@@ -13,6 +13,8 @@ declare global {
 }
 
 export const AdSlot: React.FC<AdSlotProps> = ({ id, slotType = 'in-content', className = '' }) => {
+  const adRef = useRef<HTMLModElement>(null);
+
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -26,12 +28,13 @@ export const AdSlot: React.FC<AdSlotProps> = ({ id, slotType = 'in-content', cla
   return (
     <div
       id={id}
-      className={`my-4 mx-auto w-full max-w-4xl text-center overflow-hidden min-h-[90px] flex items-center justify-center ${className}`}
+      className={`ad-container mx-auto w-full max-w-4xl text-center overflow-hidden transition-all ${className}`}
       data-ad-slot-type={slotType}
     >
       <ins
+        ref={adRef}
         className="adsbygoogle"
-        style={{ display: 'block', minWidth: '280px', minHeight: '90px' }}
+        style={{ display: 'block' }}
         data-ad-client="ca-pub-8075321921383737"
         data-ad-format="auto"
         data-full-width-responsive="true"

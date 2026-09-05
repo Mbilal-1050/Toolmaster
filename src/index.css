@@ -58,3 +58,16 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* AdSense clean responsiveness & graceful collapse when unfilled */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+.ad-container:has(ins[data-ad-status="unfilled"]) {
+  display: none !important;
+}
+
+.ad-container:empty {
+  display: none !important;
+}

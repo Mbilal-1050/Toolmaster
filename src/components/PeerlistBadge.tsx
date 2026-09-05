@@ -15,34 +15,71 @@ export const PeerlistBadge: React.FC<PeerlistBadgeProps> = ({
         href="https://peerlist.io/landedofficial/project/toolmaster--34-pdf-tools"
         target="_blank"
         rel="noreferrer"
-        className="inline-block shadow-xs hover:shadow-md rounded-xl overflow-hidden transition-shadow"
+        className="inline-block rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-shadow"
         title="ToolMaster on Peerlist"
+        aria-label="ToolMaster - Featured on Peerlist"
       >
-        {theme === 'auto' ? (
-          <>
-            {/* Light Mode Badge */}
-            <img
-              src="https://peerlist.io/api/v1/projects/embed/PRJHOK8OJNPB8DM7OI7R7KLQ9779G6?showUpvote=false&theme=light"
-              alt="ToolMaster - 34+ PDF Tools | Peerlist"
-              className="h-[54px] sm:h-[60px] w-auto dark:hidden"
-              loading="lazy"
-            />
-            {/* Dark Mode Badge */}
-            <img
-              src="https://peerlist.io/api/v1/projects/embed/PRJHOK8OJNPB8DM7OI7R7KLQ9779G6?showUpvote=false&theme=dark"
-              alt="ToolMaster - 34+ PDF Tools | Peerlist"
-              className="h-[54px] sm:h-[60px] w-auto hidden dark:block"
-              loading="lazy"
-            />
-          </>
-        ) : (
-          <img
-            src={`https://peerlist.io/api/v1/projects/embed/PRJHOK8OJNPB8DM7OI7R7KLQ9779G6?showUpvote=false&theme=${theme}`}
-            alt="ToolMaster - 34+ PDF Tools | Peerlist"
-            className="h-[54px] sm:h-[60px] w-auto"
-            loading="lazy"
+        {/* Light Theme SVG */}
+        <svg
+          width="240"
+          height="54"
+          viewBox="0 0 240 54"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={theme === 'auto' ? 'dark:hidden' : theme === 'dark' ? 'hidden' : 'block'}
+        >
+          <rect width="240" height="54" rx="12" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
+          {/* Peerlist Green Square Icon */}
+          <rect x="16" y="11" width="32" height="32" rx="8" fill="#00AA45" />
+          <path
+            d="M27 18H33C35.2 18 36.5 19.3 36.5 21.2C36.5 23.1 35.2 24.4 33 24.4H29.5V31H27V18ZM29.5 22.3H32.6C33.6 22.3 34.2 21.8 34.2 21.2C34.2 20.6 33.6 20.1 32.6 20.1H29.5V22.3Z"
+            fill="#FFFFFF"
           />
-        )}
+          {/* Text Labels */}
+          <text fill="#64748B" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9" fontWeight="700" letterSpacing="0.08em" x="58" y="21">
+            FEATURED ON
+          </text>
+          <text fill="#0F172A" fontFamily="system-ui, -apple-system, sans-serif" fontSize="15" fontWeight="800" x="58" y="38">
+            Peerlist Projects
+          </text>
+          {/* Status Badge */}
+          <rect x="184" y="15" width="44" height="24" rx="6" fill="#F0FDF4" stroke="#DCFCE7" strokeWidth="1" />
+          <circle cx="194" cy="27" r="3" fill="#00AA45" />
+          <text fill="#166534" fontFamily="system-ui, -apple-system, sans-serif" fontSize="10" fontWeight="700" x="201" y="30">
+            PRO
+          </text>
+        </svg>
+
+        {/* Dark Theme SVG */}
+        <svg
+          width="240"
+          height="54"
+          viewBox="0 0 240 54"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={theme === 'auto' ? 'hidden dark:block' : theme === 'light' ? 'hidden' : 'block'}
+        >
+          <rect width="240" height="54" rx="12" fill="#0F172A" stroke="#334155" strokeWidth="1.5" />
+          {/* Peerlist Green Square Icon */}
+          <rect x="16" y="11" width="32" height="32" rx="8" fill="#00AA45" />
+          <path
+            d="M27 18H33C35.2 18 36.5 19.3 36.5 21.2C36.5 23.1 35.2 24.4 33 24.4H29.5V31H27V18ZM29.5 22.3H32.6C33.6 22.3 34.2 21.8 34.2 21.2C34.2 20.6 33.6 20.1 32.6 20.1H29.5V22.3Z"
+            fill="#FFFFFF"
+          />
+          {/* Text Labels */}
+          <text fill="#94A3B8" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9" fontWeight="700" letterSpacing="0.08em" x="58" y="21">
+            FEATURED ON
+          </text>
+          <text fill="#F8FAFC" fontFamily="system-ui, -apple-system, sans-serif" fontSize="15" fontWeight="800" x="58" y="38">
+            Peerlist Projects
+          </text>
+          {/* Status Badge */}
+          <rect x="184" y="15" width="44" height="24" rx="6" fill="#052E16" stroke="#166534" strokeWidth="1" />
+          <circle cx="194" cy="27" r="3" fill="#00AA45" />
+          <text fill="#4ADE80" fontFamily="system-ui, -apple-system, sans-serif" fontSize="10" fontWeight="700" x="201" y="30">
+            PRO
+          </text>
+        </svg>
       </a>
     </div>
   );
