@@ -68,6 +68,18 @@ export default function App() {
     if (pathname === 'contact') return { type: 'contact' };
     if (pathname === 'blog') return { type: 'blog' };
 
+    // Support background remover route aliases (essential for Search Console & SEO)
+    if (
+      pathname === 'remove-background' ||
+      pathname === 'remove-bg' ||
+      pathname === 'background-remover' ||
+      pathname === 'tools/remove-background' ||
+      pathname === 'tools/remove-bg' ||
+      pathname === 'tools/background-remover'
+    ) {
+      return { type: 'tool', slug: 'background-remover' };
+    }
+
     if (pathname.startsWith('blog/')) {
       const blogSlug = pathname.replace('blog/', '');
       const post = BLOG_POSTS.find((p) => p.slug === blogSlug);
@@ -86,14 +98,18 @@ export default function App() {
     return { type: '404' };
   };
 
-  // Sync document title and canonical meta tag on route change
+  // Sync document title, description, and canonical meta tag on route change
   const updatePageSeo = (page: PageView) => {
-    let title = 'ToolMaster - 100% Free & In-Browser PDF Suite (33+ Tools)';
+    let title = 'ToolMaster - 100% Free & In-Browser PDF Suite (34+ Tools)';
+    let metaDescription =
+      'Free, privacy-first utility suite with 34+ tools running 100% in your browser. Remove image backgrounds with client-side AI, merge, split, compress, convert, edit, and secure documents with zero server uploads.';
     let canonicalPath = '/';
+
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname.replace(/^\/+/, '').trim() : '';
 
     switch (page.type) {
       case 'home':
-        title = 'ToolMaster - 100% Free & In-Browser PDF Suite (33+ Tools)';
+        title = 'ToolMaster - 100% Free & In-Browser PDF Suite (34+ Tools)';
         canonicalPath = '/';
         break;
       case 'tool': {
@@ -101,9 +117,20 @@ export default function App() {
         if (tool) {
           if (tool.slug === 'background-remover') {
             title = 'Free Background Remover Online - Remove Image Background Instantly | ToolMaster';
-            canonicalPath = '/tools/background-remover';
+            metaDescription =
+              'Automatically erase image backgrounds with AI precision directly in your browser. 100% free, zero server uploads, interactive preview, and instant transparent PNG download.';
+            
+            // Align canonical path with whichever URL was visited to ensure Google Search Console live test matches perfectly
+            if (currentPath === 'remove-background' || currentPath === 'tools/remove-background') {
+              canonicalPath = '/remove-background';
+            } else if (currentPath === 'tools/background-remover') {
+              canonicalPath = '/tools/background-remover';
+            } else {
+              canonicalPath = '/background-remover';
+            }
           } else {
             title = `${tool.name} Online Free - 100% In-Browser & Private | ToolMaster`;
+            metaDescription = tool.shortDesc || `${tool.name} online free and 100% private in your browser.`;
             canonicalPath = `/${tool.slug}`;
           }
         }
@@ -111,38 +138,46 @@ export default function App() {
       }
       case 'blog':
         title = 'PDF Guides, Optimization Tips & Tutorials | ToolMaster';
+        metaDescription = 'Practical guides, file optimization advice, security tips, and format conversions for PDF documents.';
         canonicalPath = '/blog';
         break;
       case 'blog-post': {
         const post = BLOG_POSTS.find((p) => p.slug === page.slug);
         if (post) {
           title = `${post.title} | ToolMaster`;
+          metaDescription = post.excerpt;
           canonicalPath = `/blog/${post.slug}`;
         }
         break;
       }
       case 'about':
         title = 'About ToolMaster - In-Browser PDF Suite';
+        metaDescription = 'Learn more about ToolMaster, our zero-upload privacy architecture, and our mission to provide free client-side document tools.';
         canonicalPath = '/about';
         break;
       case 'privacy':
         title = 'Privacy Policy - Zero Document Upload Guarantee | ToolMaster';
+        metaDescription = 'Our strict privacy policy explains how all document processing happens locally on your computer with zero server storage.';
         canonicalPath = '/privacy-policy';
         break;
       case 'terms':
         title = 'Terms of Service | ToolMaster';
+        metaDescription = 'Review the terms of service and acceptable usage policies for ToolMaster.';
         canonicalPath = '/terms-of-service';
         break;
       case 'cookies':
         title = 'Cookie Policy & Consent | ToolMaster';
+        metaDescription = 'Read about how ToolMaster uses cookies and local storage to enhance user experience.';
         canonicalPath = '/cookie-policy';
         break;
       case 'contact':
         title = 'Contact Us & Technical Support | ToolMaster';
+        metaDescription = 'Get in touch with the ToolMaster engineering team for feedback, bug reports, or feature requests.';
         canonicalPath = '/contact';
         break;
       default:
         title = 'Page Not Found | ToolMaster';
+        metaDescription = 'The requested page could not be found on ToolMaster.';
         canonicalPath = '/404';
     }
 
@@ -157,6 +192,51 @@ export default function App() {
       document.head.appendChild(canonicalLink);
     }
     canonicalLink.setAttribute('href', fullCanonicalUrl);
+
+    // Update meta description
+    let metaDescTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (metaDescTag) {
+      metaDescTag.setAttribute('content', metaDescription);
+    }
+
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', metaDescription);
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', fullCanonicalUrl);
+
+    // Structured data (Schema.org WebApplication for tool pages)
+    let schemaScript = document.getElementById('schema-structured-data') as HTMLScriptElement | null;
+    if (page.type === 'tool') {
+      const tool = TOOLS_DATA.find((t) => t.slug === page.slug);
+      if (tool) {
+        const schemaData = {
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: tool.name,
+          url: fullCanonicalUrl,
+          description: metaDescription,
+          applicationCategory: tool.slug === 'background-remover' ? 'PhotoEditor' : 'BusinessApplication',
+          operatingSystem: 'All',
+          offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
+          },
+        };
+        if (!schemaScript) {
+          schemaScript = document.createElement('script');
+          schemaScript.id = 'schema-structured-data';
+          schemaScript.type = 'application/ld+json';
+          document.head.appendChild(schemaScript);
+        }
+        schemaScript.textContent = JSON.stringify(schemaData);
+      }
+    } else if (schemaScript) {
+      schemaScript.remove();
+    }
 
     // Send pageview to Google Analytics (gtag.js) if loaded
     if (typeof window !== 'undefined' && typeof (window as unknown as { gtag?: Function }).gtag === 'function') {
