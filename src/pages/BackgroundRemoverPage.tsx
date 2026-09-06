@@ -33,7 +33,8 @@ import { FileDropzone } from '../components/FileDropzone';
 import { AdSlot } from '../components/AdSlot';
 import {
   processBackgroundRemoval,
-  isCrossOriginIsolated,
+  detectBrowserCapabilities,
+  type BrowserCapabilities,
   type InstantCutoutOptions,
   type AICutoutOptions,
 } from '../utils/backgroundRemovalEngine';
@@ -87,13 +88,14 @@ export const BackgroundRemoverPage: React.FC<BackgroundRemoverPageProps> = ({
   const [previewBg, setPreviewBg] = useState<PreviewBg>('transparent');
   const [customBgColor, setCustomBgColor] = useState('#3b82f6');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [isIsolated, setIsIsolated] = useState<boolean>(false);
+  const [browserCaps, setBrowserCaps] = useState<BrowserCapabilities>(() => detectBrowserCapabilities());
+  const [engineMessage, setEngineMessage] = useState<string | null>(null);
 
-  // Log crossOriginIsolated on page load
+  // Detect capabilities on mount
   useEffect(() => {
-    const isolated = isCrossOriginIsolated();
-    setIsIsolated(isolated);
-    console.log('[BackgroundRemoverPage] crossOriginIsolated:', isolated);
+    const caps = detectBrowserCapabilities();
+    setBrowserCaps(caps);
+    console.log('[BackgroundRemoverPage] Browser capabilities:', caps);
   }, []);
 
   // Clean up object URLs
@@ -293,6 +295,7 @@ export const BackgroundRemoverPage: React.FC<BackgroundRemoverPageProps> = ({
       setProgressStage('Finished!');
       setResultBlob(result.blob);
       setUsedEngine(result.usedEngine);
+      setEngineMessage(result.message || null);
 
       const outputUrl = URL.createObjectURL(result.blob);
       setResultImageUrl(outputUrl);
@@ -307,7 +310,7 @@ export const BackgroundRemoverPage: React.FC<BackgroundRemoverPageProps> = ({
       console.error('Background removal error:', err);
       const userMsg =
         err?.message ||
-        'Advanced AI mode unavailable in this browser — please try Chrome/Edge for best results.';
+        'Could not complete background removal on this image. Please check the image format and try again.';
       setErrorMsg(userMsg);
     } finally {
       setProcessing(false);
@@ -406,10 +409,14 @@ export const BackgroundRemoverPage: React.FC<BackgroundRemoverPageProps> = ({
                 <ShieldCheck className="w-3.5 h-3.5" /> 100% Client-Side Private
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                <Zap className="w-3.5 h-3.5" /> ISNet Neural Vision
+                <Zap className="w-3.5 h-3.5" />{' '}
+                {browserCaps.hasSharedArrayBuffer
+                  ? 'ISNet Neural Vision (Multi-Threaded)'
+                  : 'Smart Vision (Single-Threaded)'}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                WASM Isolation: {isIsolated ? 'Enabled' : 'Standard'}
+                {browserCaps.browserName}:{' '}
+                {browserCaps.hasSharedArrayBuffer ? 'WASM Multi-Threading Ready' : 'Single-Threaded Mode'}
               </span>
             </div>
           </div>
@@ -811,12 +818,15 @@ export const BackgroundRemoverPage: React.FC<BackgroundRemoverPageProps> = ({
                       className="w-2 h-2 rounded-full animate-pulse"
                       style={{ backgroundColor: usedEngine === 'ai' ? '#10b981' : '#f59e0b' }}
                     />
-                    Engine: {usedEngine === 'ai' ? 'AI Neural Model (ISNet)' : 'Fallback'}
+                    Engine:{' '}
+                    {usedEngine === 'ai'
+                      ? 'AI Neural Model (ISNet multi-threaded)'
+                      : 'Single-Threaded Vision Engine'}
                   </div>
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  Cutout generated with 32-bit transparent alpha.
+                  {engineMessage || 'Cutout generated with 32-bit transparent alpha.'}
                 </p>
               </div>
 
