@@ -19,11 +19,15 @@ import {
   Cpu,
   ExternalLink,
   FlaskConical,
+  FlipHorizontal,
+  FlipVertical,
+  RotateCw,
 } from 'lucide-react';
 import { FileDropzone } from '../FileDropzone';
 import {
   processBackgroundRemoval,
   isCrossOriginIsolated,
+  exportOrientedTransparentPng,
   type InstantCutoutOptions,
   type AICutoutOptions,
 } from '../../utils/backgroundRemovalEngine';
@@ -71,6 +75,12 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
   const [customBgColor, setCustomBgColor] = useState('#3b82f6');
   const [isIsolated, setIsIsolated] = useState<boolean>(false);
 
+  // Orientation & Transform controls: Default strictly preserves 1:1 original orientation (no negative scale)
+  const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
+  const [flipVertical, setFlipVertical] = useState<boolean>(false);
+  const [rotation, setRotation] = useState<number>(0);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+
   useEffect(() => {
     const isolated = isCrossOriginIsolated();
     setIsIsolated(isolated);
@@ -85,6 +95,10 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
   }, [originalImageUrl, resultImageUrl]);
 
   useEffect(() => {
+    setFlipHorizontal(false);
+    setFlipVertical(false);
+    setRotation(0);
+
     if (files.length > 0) {
       const file = files[0];
       const url = URL.createObjectURL(file);
@@ -295,27 +309,56 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!resultBlob || files.length === 0) return;
-    const baseName = files[0].name.replace(/\.[^/.]+$/, '');
-    const fileName = `${baseName}_transparent_bg.png`;
-    const url = URL.createObjectURL(resultBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setIsExporting(true);
+    try {
+      const finalBlob = await exportOrientedTransparentPng(resultBlob, {
+        flipHorizontal,
+        flipVertical,
+        rotation,
+      });
+
+      const baseName = files[0].name.replace(/\.[^/.]+$/, '');
+      const suffix = flipHorizontal ? '_mirrored' : '';
+      const fileName = `${baseName}_transparent_bg${suffix}.png`;
+      const url = URL.createObjectURL(finalBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download export failed:', err);
+      const baseName = files[0].name.replace(/\.[^/.]+$/, '');
+      const fileName = `${baseName}_transparent_bg.png`;
+      const url = URL.createObjectURL(resultBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleCopyImage = async () => {
     if (!resultBlob) return;
     try {
       if (navigator.clipboard && window.ClipboardItem) {
+        const finalBlob = await exportOrientedTransparentPng(resultBlob, {
+          flipHorizontal,
+          flipVertical,
+          rotation,
+        });
         await navigator.clipboard.write([
           new ClipboardItem({
-            'image/png': resultBlob,
+            'image/png': finalBlob,
           }),
         ]);
         setCopied(true);
@@ -695,34 +738,90 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
 
           {/* Controls Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
-            <div className="flex items-center gap-1">
-              <span className="font-semibold text-slate-600 dark:text-slate-300 mr-1.5">
-                Compare:
-              </span>
-              <button
-                type="button"
-                onClick={() => setViewMode('slider')}
-                className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
-                  viewMode === 'slider'
-                    ? 'bg-rose-600 text-white'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
-              >
-                <SplitSquareVertical className="w-3.5 h-3.5" />
-                Split Slider
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('side-by-side')}
-                className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
-                  viewMode === 'side-by-side'
-                    ? 'bg-rose-600 text-white'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
-              >
-                <Columns className="w-3.5 h-3.5" />
-                Side by Side
-              </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1">
+                <span className="font-semibold text-slate-600 dark:text-slate-300 mr-1.5">
+                  Compare:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('slider')}
+                  className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
+                    viewMode === 'slider'
+                      ? 'bg-rose-600 text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  <SplitSquareVertical className="w-3.5 h-3.5" />
+                  Split Slider
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('side-by-side')}
+                  className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
+                    viewMode === 'side-by-side'
+                      ? 'bg-rose-600 text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  <Columns className="w-3.5 h-3.5" />
+                  Side by Side
+                </button>
+              </div>
+
+              {/* Orientation & Flip Controls */}
+              <div className="flex items-center gap-1 bg-white dark:bg-slate-900/80 px-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span className="font-semibold text-slate-600 dark:text-slate-300 text-[11px] mr-0.5">
+                  Orientation:
+                </span>
+                <button
+                  type="button"
+                  title={flipHorizontal ? "Un-flip (Restore original left-to-right)" : "Flip Horizontally (Mirror left-right)"}
+                  onClick={() => setFlipHorizontal((prev) => !prev)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition ${
+                    flipHorizontal
+                      ? 'bg-rose-600 text-white shadow-xs'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <FlipHorizontal className="w-3.5 h-3.5" />
+                  <span>{flipHorizontal ? 'Mirrored (Flipped)' : 'Flip Horizontal'}</span>
+                </button>
+                <button
+                  type="button"
+                  title="Flip Vertically"
+                  onClick={() => setFlipVertical((prev) => !prev)}
+                  className={`p-1.5 rounded-lg text-xs font-semibold transition ${
+                    flipVertical
+                      ? 'bg-rose-600 text-white shadow-xs'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <FlipVertical className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  title="Rotate 90° Clockwise"
+                  onClick={() => setRotation((prev) => (prev + 90) % 360)}
+                  className="p-1.5 rounded-lg text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                </button>
+                {(flipHorizontal || flipVertical || rotation !== 0) && (
+                  <button
+                    type="button"
+                    title="Reset Orientation to Original"
+                    onClick={() => {
+                      setFlipHorizontal(false);
+                      setFlipVertical(false);
+                      setRotation(0);
+                    }}
+                    className="px-1.5 py-0.5 text-[10px] text-rose-600 dark:text-rose-400 hover:underline font-bold"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -795,6 +894,11 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
                 <img
                   src={resultImageUrl}
                   alt="Result"
+                  style={{
+                    transform: `scaleX(${flipHorizontal ? -1 : 1}) scaleY(${flipVertical ? -1 : 1}) rotate(${rotation}deg)`,
+                    transformOrigin: 'center center',
+                    transition: 'transform 0.15s ease-out',
+                  }}
                   className="absolute inset-0 w-full h-full object-contain pointer-events-none p-4"
                 />
 
@@ -808,6 +912,11 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
                   <img
                     src={originalImageUrl}
                     alt="Original"
+                    style={{
+                      transform: `scaleX(${flipHorizontal ? -1 : 1}) scaleY(${flipVertical ? -1 : 1}) rotate(${rotation}deg)`,
+                      transformOrigin: 'center center',
+                      transition: 'transform 0.15s ease-out',
+                    }}
                     className="absolute inset-0 w-full h-full object-contain p-4"
                   />
                 </div>
@@ -849,6 +958,11 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
                       <img
                         src={originalImageUrl}
                         alt="Original"
+                        style={{
+                          transform: `scaleX(${flipHorizontal ? -1 : 1}) scaleY(${flipVertical ? -1 : 1}) rotate(${rotation}deg)`,
+                          transformOrigin: 'center center',
+                          transition: 'transform 0.15s ease-out',
+                        }}
                         className="max-h-full max-w-full object-contain rounded-md"
                       />
                     )}
@@ -879,6 +993,11 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
                       <img
                         src={resultImageUrl}
                         alt="Cutout"
+                        style={{
+                          transform: `scaleX(${flipHorizontal ? -1 : 1}) scaleY(${flipVertical ? -1 : 1}) rotate(${rotation}deg)`,
+                          transformOrigin: 'center center',
+                          transition: 'transform 0.15s ease-out',
+                        }}
                         className="max-h-full max-w-full object-contain rounded-md"
                       />
                     )}
@@ -889,31 +1008,40 @@ export const BackgroundRemoverTool: React.FC<BackgroundRemoverToolProps> = ({ on
           </div>
 
           {/* Download & Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="w-full sm:w-auto px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-2xl shadow-lg hover:shadow-xl shadow-rose-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Download className="w-5 h-5" /> Download Transparent PNG
-            </button>
+          <div className="space-y-2 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={isExporting}
+                className="w-full sm:w-auto px-8 py-3.5 bg-rose-600 hover:bg-rose-700 disabled:opacity-75 text-white font-bold text-sm rounded-2xl shadow-lg hover:shadow-xl shadow-rose-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-5 h-5" /> {isExporting ? 'Preparing PNG...' : 'Download Transparent PNG'}
+              </button>
 
-            <button
-              type="button"
-              onClick={handleCopyImage}
-              className="w-full sm:w-auto px-6 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'Copied!' : 'Copy Cutout Image'}
-            </button>
+              <button
+                type="button"
+                onClick={handleCopyImage}
+                disabled={isExporting}
+                className="w-full sm:w-auto px-6 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Copied to Clipboard!' : 'Copy Cutout Image'}
+              </button>
 
-            <button
-              type="button"
-              onClick={handleRemoveFile}
-              className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4" /> Process Another Image
-            </button>
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <RotateCcw className="w-4 h-4" /> Reset
+              </button>
+            </div>
+
+            <div className="text-center text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+              <span>Original image orientation is strictly preserved 1:1. Never mirrored or flipped unless selected.</span>
+            </div>
           </div>
         </div>
       )}

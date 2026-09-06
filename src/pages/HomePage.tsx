@@ -184,8 +184,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       </div>
 
       {/* Top AdSlot */}
-      <div className="max-w-7xl mx-auto px-4 mt-6">
-        <AdSlot id="ad-slot-header" slotType="header" />
+      <div className="max-w-7xl mx-auto px-4">
+        <AdSlot id="ad-slot-header" slotType="header" className="mt-6" />
       </div>
 
       {/* Main Stacked Category Tool Catalog */}
@@ -195,8 +195,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       <HowItWorks />
 
       {/* In-Content AdSlot */}
-      <div className="max-w-7xl mx-auto px-4 my-8">
-        <AdSlot id="ad-slot-in-content" slotType="in-content" />
+      <div className="max-w-7xl mx-auto px-4">
+        <AdSlot id="ad-slot-in-content" slotType="in-content" className="my-8" />
       </div>
 
       {/* SEO Articles / Latest Blog Posts */}
@@ -297,8 +297,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* Footer AdSlot */}
-      <div className="max-w-7xl mx-auto px-4 my-6">
-        <AdSlot id="ad-slot-footer" slotType="footer" />
+      <div className="max-w-7xl mx-auto px-4">
+        <AdSlot id="ad-slot-footer" slotType="footer" className="my-6" />
       </div>
     </div>
   );

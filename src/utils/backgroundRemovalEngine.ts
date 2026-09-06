@@ -231,6 +231,9 @@ export async function removeBackgroundInstant(
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('Could not get 2D canvas context');
 
+  // Explicitly ensure identity transform - NEVER apply scale(-1, 1) or inverted matrices
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
   ctx.drawImage(img, 0, 0, width, height);
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
@@ -489,5 +492,99 @@ export async function processBackgroundRemoval(
         'Processed using Single-Threaded Vision Engine (AI Neural Model auto-recovered).',
     };
   }
+}
+
+export interface OrientationTransformOptions {
+  flipHorizontal?: boolean;
+  flipVertical?: boolean;
+  rotation?: number; // 0, 90, 180, 270 degrees
+}
+
+/**
+ * Ensures clean, un-flipped canvas export with strict identity transforms.
+ * Never applies negative scale or mirroring unless explicitly requested by the user.
+ * Preserves the exact 1:1 original orientation of the image.
+ */
+export async function exportOrientedTransparentPng(
+  blob: Blob,
+  options: OrientationTransformOptions = {}
+): Promise<Blob> {
+  const { flipHorizontal = false, flipVertical = false, rotation = 0 } = options;
+
+  // If no transform requested (default), return blob directly to prevent any generation artifacts
+  if (!flipHorizontal && !flipVertical && rotation === 0) {
+    return blob;
+  }
+
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      try {
+        const normRotation = ((rotation % 360) + 360) % 360;
+        const isRotated90or270 = normRotation === 90 || normRotation === 270;
+
+        const origWidth = img.naturalWidth || img.width;
+        const origHeight = img.naturalHeight || img.height;
+
+        const canvasWidth = isRotated90or270 ? origHeight : origWidth;
+        const canvasHeight = isRotated90or270 ? origWidth : origHeight;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(blob);
+          return;
+        }
+
+        // Explicitly reset any transform to identity matrix first
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // Move to center of canvas
+        ctx.translate(canvasWidth / 2, canvasHeight / 2);
+
+        // Apply rotation if any
+        if (normRotation !== 0) {
+          ctx.rotate((normRotation * Math.PI) / 180);
+        }
+
+        // Apply user-requested flips:
+        // By default flipHorizontal is false (scale 1). Only if user explicitly toggles Flip Horizontal does it use -1.
+        const scaleX = flipHorizontal ? -1 : 1;
+        const scaleY = flipVertical ? -1 : 1;
+        ctx.scale(scaleX, scaleY);
+
+        // Draw image centered
+        ctx.drawImage(img, -origWidth / 2, -origHeight / 2, origWidth, origHeight);
+
+        // Always reset transform cleanly
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        canvas.toBlob((outBlob) => {
+          if (outBlob) {
+            resolve(outBlob);
+          } else {
+            resolve(blob);
+          }
+        }, 'image/png');
+      } catch (err) {
+        console.error('Error in exportOrientedTransparentPng:', err);
+        resolve(blob);
+      }
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(blob);
+    };
+
+    img.src = url;
+  });
 }
 

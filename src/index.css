@@ -59,15 +59,49 @@ html {
   }
 }
 
-/* AdSense clean responsiveness & graceful collapse when unfilled */
-ins.adsbygoogle[data-ad-status="unfilled"] {
-  display: none !important;
+/* AdSense clean responsiveness & graceful collapse when unfilled or pending approval */
+ins.adsbygoogle {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
 }
 
-.ad-container:has(ins[data-ad-status="unfilled"]) {
+ins.adsbygoogle[data-ad-status="unfilled"],
+ins.adsbygoogle[data-adsbygoogle-status="done"]:not([data-ad-status="filled"]) {
   display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.ad-container:empty {
+.ad-container {
+  min-height: 0;
+  background: transparent !important;
+  border: none !important;
+}
+
+.ad-container.ad-collapsed,
+.ad-container.ad-unfilled,
+.ad-container:has(ins[data-ad-status="unfilled"]),
+.ad-container:has(ins[data-adsbygoogle-status="done"]:not([data-ad-status="filled"])) {
   display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+/* Gracefully collapse wrapper containers that contain unfilled/collapsed ad slots */
+div:has(> .ad-container.ad-collapsed),
+div:has(> .ad-container.ad-unfilled),
+div:has(> .ad-container:has(ins[data-ad-status="unfilled"])) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  min-height: 0 !important;
 }

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FileText } from 'lucide-react';
 
 interface ProductHuntBadgeProps {
   theme?: 'light' | 'dark' | 'auto';
@@ -86,15 +87,24 @@ export const ProductHuntBadge: React.FC<ProductHuntBadgeProps> = ({
 };
 
 export const ProductHuntLaunchCard: React.FC<{ className?: string }> = ({ className = '' }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+
   return (
     <div className={`w-full max-w-[540px] mx-auto p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all hover:shadow-md ${className}`}>
       <div className="flex items-center gap-3.5 mb-3.5">
-        <img
-          alt="ToolMaster"
-          src="https://ph-files.imgix.net/213df699-417f-4543-ad80-3796577fc83a.png?auto=compress,format&codec=mozjpeg&cs=strip&fit=crop&h=80&w=80"
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shrink-0 shadow-xs border border-slate-100 dark:border-slate-800"
-          loading="lazy"
-        />
+        {!imageFailed ? (
+          <img
+            alt="ToolMaster"
+            src="https://ph-files.imgix.net/213df699-417f-4543-ad80-3796577fc83a.png?auto=compress,format&codec=mozjpeg&cs=strip&fit=crop&h=80&w=80"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shrink-0 shadow-xs border border-slate-100 dark:border-slate-800"
+            loading="lazy"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <FileText className="w-7 h-7" />
+          </div>
+        )}
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center gap-2">
             <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
